@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import { cn } from "@/lib/utils";
-import { fontMono, fontSans } from "@/lib/fonts";
+import { fontMono, fontPoppins, fontSans } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
@@ -22,7 +22,8 @@ export default function RootLayout({
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable,
-          fontMono.variable
+          fontMono.variable,
+          fontPoppins.variable
         )}
       >
         <ThemeProvider
