@@ -42,8 +42,9 @@ export default function Home() {
           <div className="col-span-1 md:row-span-2 border rounded-md shadow-sm flex flex-col p-4 space-y-4">
             <p className="font-semibold">Activities Timeline</p>
             <Timeline>
-              {TIMELINE_DUMMY_DATA.map((item) => (
+              {TIMELINE_DUMMY_DATA.map((item, index) => (
                 <TimelineItem
+                  key={index}
                   message={item.message}
                   timestamp={item.timestamp}
                 />
