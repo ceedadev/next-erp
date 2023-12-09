@@ -1,6 +1,14 @@
 import * as React from "react";
 
+import {
+  CubeIcon,
+  ArrowTopRightIcon,
+  ArrowBottomLeftIcon,
+} from "@radix-ui/react-icons";
+
 import { Sheet } from "@/components/sheet";
+import { Button } from "@/components/ui/button";
+import { KPICard } from "@/components/kpi-card";
 import { Timeline, TimelineItem } from "@/components/timeline";
 
 const TIMELINE_DUMMY_DATA = [
@@ -26,6 +34,12 @@ const TIMELINE_DUMMY_DATA = [
 export default function Home() {
   return (
     <main className="">
+      <div className="flex flex-row items-center space-x-4 h-20 bg-neutral-950 px-10">
+        <p className="text-white">Quick Menu</p>
+        <Button variant={"outline"} className="border-white p-3">
+          <CubeIcon className="text-white" />
+        </Button>
+      </div>
       <Sheet>
         <div>
           <p className="text-muted-foreground text-sm">
@@ -35,12 +49,56 @@ export default function Home() {
             Welcome Back, Armanda
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-rows-3 md:grid-cols-3 gap-4">
-          <div className="col-span-1 md:col-span-2 border rounded-md shadow-sm flex flex-col p-4">
-            <p className="font-semibold">Enterprise Resource Planning</p>
-          </div>
-          <div className="col-span-1 md:row-span-2 border rounded-md shadow-sm flex flex-col p-4 space-y-4">
-            <p className="font-semibold">Activities Timeline</p>
+        <div className="grid md:grid-cols-3 gap-4 grid-flow-dense">
+          <KPICard title="Total Sales">
+            <p className="text-4xl">
+              43.942.739
+              <span className="text-sm font-semibold"> IDR</span>
+            </p>
+            <p>gained 23% this week</p>
+          </KPICard>
+          <KPICard title="Total Inventory">
+            <p className="text-4xl">
+              143.312.231
+              <span className="text-sm font-semibold"> IDR</span>
+            </p>
+            <p>gained 23% this week</p>
+          </KPICard>
+          <KPICard title="Inventory Flow">
+            <div className="flex flex-row justify-evenly items-center mx-4 ">
+              <div className="flex flex-col">
+                <div className="flex flex-row space-x-2">
+                  <ArrowBottomLeftIcon />
+                  <p>In</p>
+                </div>
+                <p className="text-4xl">
+                  12 <span className="text-sm">Units</span>
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <p>Out</p>
+                <p className="text-4xl">
+                  42 <span className="text-sm">Units</span>
+                </p>
+              </div>
+            </div>
+          </KPICard>
+          <KPICard title="Unique Visitors">
+            <p className="text-4xl">
+              20
+              <span className="text-sm font-semibold"> Visitors</span>
+            </p>
+            <p>gained 23% this week</p>
+          </KPICard>
+          <KPICard title="Total Customers">
+            <p className="text-4xl">
+              20
+              <span className="text-sm font-semibold"> Visitors</span>
+            </p>
+            <p>gained 23% this week</p>
+          </KPICard>
+
+          <KPICard title="Activities Timeline" colSpan={1} rowSpan={2}>
             <Timeline>
               {TIMELINE_DUMMY_DATA.map((item, index) => (
                 <TimelineItem
@@ -50,10 +108,7 @@ export default function Home() {
                 />
               ))}
             </Timeline>
-          </div>
-          <div className="col-span-1 md:row-span-1 md:col-span-2 border rounded-md shadow-sm flex p-4">
-            03
-          </div>
+          </KPICard>
         </div>
       </Sheet>
     </main>
