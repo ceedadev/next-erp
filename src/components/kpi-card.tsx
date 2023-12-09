@@ -19,7 +19,7 @@ export function KPICard({
         className,
         `md:row-span-${rowSpan.toString()}`,
         `md:col-span-${colSpan.toString()}`,
-        "border rounded-md shadow-sm flex flex-col p-4"
+        "bg-background border rounded-md shadow-sm flex flex-col p-4 space-y-4"
       )}
     >
       <p className="font-semibold font-poppins">{title}</p>
