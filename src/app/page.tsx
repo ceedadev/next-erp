@@ -97,8 +97,7 @@ export default function Home() {
             </p>
             <p>gained 23% this week</p>
           </KPICard>
-
-          <KPICard title="Activities Timeline" colSpan={1} rowSpan={2}>
+          <KPICard title="Activities Timeline">
             <Timeline>
               {TIMELINE_DUMMY_DATA.map((item, index) => (
                 <TimelineItem
@@ -108,6 +107,12 @@ export default function Home() {
                 />
               ))}
             </Timeline>
+          </KPICard>
+          <KPICard
+            title="Sales Chart"
+            className="md:col-start-1 md:col-end-4 h-80"
+          >
+            <p>Test</p>
           </KPICard>
         </div>
       </Sheet>
