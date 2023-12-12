@@ -27,7 +27,7 @@ export default function PaginationControl({
   const pathName = usePathname();
 
   const page = searchParams.get("page") ?? 1;
-  const perPage = searchParams.get("perPage") ?? 5;
+  const perPage = searchParams.get("perPage") ?? 10;
 
   return (
     <div className="flex flex-row justify-end items-center gap-2">

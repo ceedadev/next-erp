@@ -14,7 +14,7 @@ export default async function ProductPage({
   };
 }) {
   const page = Number(searchParams.page ?? 1);
-  const perPage = searchParams.perPage ?? 5;
+  const perPage = searchParams.perPage ?? 10;
   const offset = (page - 1) * perPage;
 
   const allProducts = await db
