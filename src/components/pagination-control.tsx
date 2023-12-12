@@ -2,7 +2,14 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  DoubleArrowRightIcon,
+  DoubleArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowLeftIcon,
+} from "@radix-ui/react-icons";
 
 interface PaginationControlProps {
   hasNextPage: boolean;
@@ -23,7 +30,17 @@ export default function PaginationControl({
   const perPage = searchParams.get("perPage") ?? 5;
 
   return (
-    <div className="flex flex-row justify- items-center gap-2">
+    <div className="flex flex-row justify-end items-center gap-2">
+      <Button
+        disabled={!hasPrevPage}
+        variant={"outline"}
+        onClick={() => {
+          router.push(`${pathName}?page=1&perPage=${perPage}`);
+        }}
+      >
+        <DoubleArrowLeftIcon />
+      </Button>
+
       <Button
         disabled={!hasPrevPage}
         variant={"outline"}
@@ -35,9 +52,9 @@ export default function PaginationControl({
       >
         <ChevronLeftIcon />
       </Button>
-      <div className="mx-10">
-        {page} / {totalPages}
-      </div>
+      <p className="mx-10">
+        Page {page} of {totalPages}
+      </p>
       <Button
         disabled={!hasNextPage}
         variant={"outline"}
@@ -48,6 +65,15 @@ export default function PaginationControl({
         }}
       >
         <ChevronRightIcon />
+      </Button>
+      <Button
+        disabled={!hasNextPage}
+        variant={"outline"}
+        onClick={() => {
+          router.push(`${pathName}?page=${totalPages}&perPage=${perPage}`);
+        }}
+      >
+        <DoubleArrowRightIcon />
       </Button>
     </div>
   );
