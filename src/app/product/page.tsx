@@ -20,7 +20,7 @@ export default async function ProductPage({
   const allProducts = await db
     .select()
     .from(products)
-    .orderBy(asc(products.name))
+    .orderBy(asc(products.id))
     .limit(perPage)
     .offset(offset);
 
