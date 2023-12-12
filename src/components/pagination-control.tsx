@@ -7,11 +7,13 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 interface PaginationControlProps {
   hasNextPage: boolean;
   hasPrevPage: boolean;
+  totalPages: number;
 }
 
 export default function PaginationControl({
   hasNextPage,
   hasPrevPage,
+  totalPages,
 }: PaginationControlProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,7 +36,7 @@ export default function PaginationControl({
         <ChevronLeftIcon />
       </Button>
       <div className="mx-10">
-        {page} / {Math.ceil(10 / Number(perPage))}
+        {page} / {totalPages}
       </div>
       <Button
         disabled={!hasNextPage}

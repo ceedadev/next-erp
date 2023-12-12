@@ -1,55 +1,54 @@
 import PaginationControl from "@/components/pagination-control";
 import { Sheet } from "@/components/sheet";
+import { db } from "@/db/connect";
+import { products } from "@/db/schema";
+import { asc, sql } from "drizzle-orm";
 
-const DUMMY_DATA = [
-  "Product 1",
-  "Product 2",
-  "Product 3",
-  "Product 4",
-  "Product 5",
-  "Product 6",
-  "Product 7",
-  "Product 8",
-  "Product 9",
-  "Product 10",
-  "Product 11",
-  "Product 12",
-  "Product 13",
-  "Product 14",
-  "Product 15",
-];
-
-export default function ProductPage({
+export default async function ProductPage({
   searchParams,
 }: {
   searchParams: {
-    page: number;
+    page: string;
     perPage: number;
+    sort: [string, "asc" | "desc"];
   };
 }) {
-  const page = searchParams.page ?? 1;
+  const page = Number(searchParams.page ?? 1);
   const perPage = searchParams.perPage ?? 5;
+  const offset = (page - 1) * perPage;
 
-  const start = (page - 1) * perPage;
-  const end = start + perPage;
+  const allProducts = await db
+    .select()
+    .from(products)
+    .orderBy(asc(products.name))
+    .limit(perPage)
+    .offset(offset);
 
-  const entries = DUMMY_DATA.slice(start, end);
+  const totalProducts = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(products);
+
+  const numberOfPages = Math.ceil(totalProducts[0].count / perPage);
 
   return (
     <Sheet>
       <p>Product Page</p>
+      <p>{JSON.stringify(allProducts)}</p>
+      <p>{JSON.stringify(totalProducts)}</p>
+      <p>{numberOfPages}</p>
       <div className="flex flex-col space-y-4">
-        {entries.map((entry) => (
+        {allProducts.map((product) => (
           <div
-            key={entry}
+            key={product.id}
             className="flex flex-row justify-between items-center px-4 py-2 bg-white rounded-md shadow-md"
           >
-            <p>{entry}</p>
+            <p>{product.name}</p>
           </div>
         ))}
         <PaginationControl
-          hasNextPage={end < DUMMY_DATA.length}
-          hasPrevPage={start > 0}
+          totalPages={numberOfPages}
+          hasNextPage={page < numberOfPages}
+          hasPrevPage={page > 1}
         />
       </div>
     </Sheet>
