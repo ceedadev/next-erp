@@ -39,9 +39,25 @@ export const categories = pgTable("categories", {
 export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;
 
-// export const activities = pgTable("activities", {
-//   id: serial("id").primaryKey(),
-//   description: text("description"),
-//   initiator:
-//   timestamp: timestamp("timestamp").defaultNow(),
-// });
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }),
+  email: varchar("email", { length: 255 }),
+  password: varchar("password", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt"),
+  isActive: boolean("isActive").default(true),
+});
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
+export const activities = pgTable("activities", {
+  id: serial("id").primaryKey(),
+  description: text("description"),
+  initiator: integer("initiator").references(() => users.id),
+  timestamp: timestamp("timestamp").defaultNow(),
+});
+
+export type Activity = typeof activities.$inferSelect;
+export type NewActivity = typeof activities.$inferInsert;
