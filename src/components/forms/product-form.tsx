@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 
 import { sluggify } from "@/lib/format";
 import { CreateProduct } from "@/lib/validations/product";
+import { Textarea } from "../ui/textarea";
 
 export default function ProductForm() {
   // File input
@@ -144,11 +145,7 @@ export default function ProductForm() {
               </div>
               <div className="flex flex-col w-full space-y-2">
                 <FormControl>
-                  <textarea
-                    className="w-full p-2 border rounded-md bg-background focus:ring-1 focus:ring-primary focus:outline-none text-base placeholder:text-muted-foreground placeholder:text-sm min-h-[100px]"
-                    placeholder="Product Description"
-                    {...field}
-                  />
+                  <Textarea placeholder="Product Description" {...field} />
                 </FormControl>
                 <FormMessage />
               </div>
