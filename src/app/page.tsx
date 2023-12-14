@@ -34,12 +34,12 @@ const TIMELINE_DUMMY_DATA = [
 export default function Home() {
   return (
     <main className="">
-      <div className="flex flex-row items-center space-x-4 h-20 bg-neutral-950 px-10">
+      <header className="flex flex-row items-center space-x-4 h-20 bg-neutral-950 px-10">
         <p className="text-white">Quick Menu</p>
         <Button variant={"outline"} className="border-white p-3">
           <CubeIcon className="text-white" />
         </Button>
-      </div>
+      </header>
       <Sheet>
         <div>
           <p className="text-muted-foreground text-sm">
