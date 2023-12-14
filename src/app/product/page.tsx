@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Image from "next/image";
 
 export default async function ProductPage({
   searchParams,
@@ -47,47 +48,62 @@ export default async function ProductPage({
 
   return (
     <Sheet>
-      <p>Product Page</p>
-      <p>{JSON.stringify(allProducts)}</p>
-      <p>{JSON.stringify(totalProducts)}</p>
+      <h1>Product Page</h1>
       <p>{numberOfPages}</p>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Id</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Stock</TableHead>
-            <TableHead className="text-center">Active</TableHead>
-            <TableHead className="text-center">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {allProducts.map((product) => (
-            <TableRow key={product.id}>
-              <TableCell>{product.id}</TableCell>
-              <TableCell className="">{product.name}</TableCell>
-              <TableCell className="w-40">
-                <Input type="number" value={Number(product.price)} />
-              </TableCell>
-              <TableCell className="w-40">
-                <Input type="number" value={Number(product.quantity)} />
-              </TableCell>
-              <TableCell className="w-12">
-                <Switch checked={product.isActive} />
-              </TableCell>
-              <TableCell className="space-x-4 w-32 justify-between">
-                <Button variant={"ghost"}>
-                  <Pencil2Icon />
-                </Button>
-                <Button variant={"ghost"}>
-                  <TrashIcon className="text-destructive" />
-                </Button>
-              </TableCell>
+      <div className="overflow-auto border md:p-4 rounded-md shadow-md">
+        <Table className="overflow-scroll min-w-max">
+          <TableHeader>
+            <TableRow>
+              <TableHead></TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Stock</TableHead>
+              <TableHead className="text-center">Active</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {allProducts.map((product) => (
+              <TableRow key={product.id}>
+                <TableCell className="w-12">
+                  {product.image ? (
+                    <Image
+                      src={product.image}
+                      className="w-10 h-10"
+                      width={40}
+                      height={40}
+                      alt={`${product.name} thumbnail image`}
+                    />
+                  ) : (
+                    <div className="w-10 h-10 bg-neutral-400" />
+                  )}
+                </TableCell>
+                <TableCell className="flex flex-col items-start justify-center min-w-[300px]">
+                  <p>{product.name}</p>
+                  <p className="text-xs text-muted-foreground">SKU</p>
+                </TableCell>
+                <TableCell className="w-40">
+                  <Input type="number" value={Number(product.price)} />
+                </TableCell>
+                <TableCell className="w-40">
+                  <Input type="number" value={Number(product.quantity)} />
+                </TableCell>
+                <TableCell className="w-12">
+                  <Switch checked={product.isActive} />
+                </TableCell>
+                <TableCell className="space-x-4 w-32 justify-between">
+                  <Button variant={"ghost"}>
+                    <Pencil2Icon />
+                  </Button>
+                  <Button variant={"ghost"}>
+                    <TrashIcon className="text-destructive" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
       <PaginationControl
         totalPages={numberOfPages}
         hasNextPage={page < numberOfPages}

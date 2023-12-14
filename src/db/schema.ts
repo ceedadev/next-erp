@@ -11,15 +11,15 @@ import {
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }),
+  name: varchar("name", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }),
-  price: decimal("price"),
-  quantity: integer("quantity").default(0),
+  price: decimal("price").default("0").notNull(),
+  quantity: integer("quantity").default(0).notNull(),
   description: text("description"),
   image: varchar("image", { length: 255 }),
-  createdAt: timestamp("createdAt").defaultNow(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt"),
-  isActive: boolean("isActive").default(true),
+  isActive: boolean("isActive").default(true).notNull(),
   categoryId: integer("categoryId").references(() => categories.id),
 });
 
@@ -28,12 +28,12 @@ export type NewProduct = typeof products.$inferInsert;
 
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }),
+  name: varchar("name", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }),
   description: text("description"),
-  createdAt: timestamp("createdAt").defaultNow(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt"),
-  isActive: boolean("isActive").default(true),
+  isActive: boolean("isActive").default(true).notNull(),
 });
 
 export type Category = typeof categories.$inferSelect;
