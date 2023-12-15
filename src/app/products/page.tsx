@@ -93,6 +93,7 @@ export default async function ProductPage({
           <TableBody>
             {allProducts.length > 0 ? (
               allProducts.map((product) => (
+                // TODO: Refactor into client components
                 <TableRow key={product.id}>
                   <TableCell className="w-12">
                     {product.image ? (
