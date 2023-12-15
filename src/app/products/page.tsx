@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { asc, sql } from "drizzle-orm";
 import { TrashIcon, Pencil2Icon } from "@radix-ui/react-icons";
 
@@ -6,6 +7,7 @@ import { products } from "@/db/schema";
 
 import { Sheet } from "@/components/sheet";
 import PaginationControl from "@/components/pagination-control";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,7 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
 
 export default async function ProductPage({
   searchParams,
@@ -48,7 +49,12 @@ export default async function ProductPage({
 
   return (
     <Sheet>
-      <h1>Product Page</h1>
+      <Breadcrumbs
+        segments={[
+          { title: "Home", href: "/" },
+          { title: "Product", href: "/products" },
+        ]}
+      />
       <p>{numberOfPages}</p>
       <div className="overflow-auto border md:p-4 rounded-md shadow-md">
         <Table className="overflow-scroll min-w-max">
