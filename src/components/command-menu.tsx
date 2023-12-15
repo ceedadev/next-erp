@@ -42,15 +42,17 @@ export function CommandMenu() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            <CommandItem onSelect={() => router.push("/product/add")}>
+            <CommandItem onSelect={() => router.push("/products/add")}>
               Add Products
             </CommandItem>
             <CommandItem>Add Customers</CommandItem>
             <CommandItem>View Inventory</CommandItem>
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup heading="A">
-            <CommandItem>AA</CommandItem>
+          <CommandGroup heading="Products">
+            <CommandItem onSelect={() => router.push("/products")}>
+              View All Products
+            </CommandItem>
             <CommandItem>AB</CommandItem>
             <CommandItem>AC</CommandItem>
           </CommandGroup>
