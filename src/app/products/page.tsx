@@ -91,44 +91,52 @@ export default async function ProductPage({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {allProducts.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell className="w-12">
-                  {product.image ? (
-                    <Image
-                      src={product.image}
-                      className="w-10 h-10"
-                      width={40}
-                      height={40}
-                      alt={`${product.name} thumbnail image`}
-                    />
-                  ) : (
-                    <div className="w-10 h-10 bg-neutral-400" />
-                  )}
-                </TableCell>
-                <TableCell className="flex flex-col items-start justify-center min-w-[300px]">
-                  <p>{product.name}</p>
-                  <p className="text-xs text-muted-foreground">SKU</p>
-                </TableCell>
-                <TableCell className="w-40">
-                  <Input type="number" value={Number(product.price)} />
-                </TableCell>
-                <TableCell className="w-40">
-                  <Input type="number" value={Number(product.quantity)} />
-                </TableCell>
-                <TableCell className="w-12">
-                  <Switch checked={product.isActive} />
-                </TableCell>
-                <TableCell className="space-x-4 w-32 justify-between">
-                  <Button variant={"ghost"}>
-                    <Pencil2Icon />
-                  </Button>
-                  <Button variant={"ghost"}>
-                    <TrashIcon className="text-destructive" />
-                  </Button>
+            {allProducts.length > 0 ? (
+              allProducts.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell className="w-12">
+                    {product.image ? (
+                      <Image
+                        src={product.image}
+                        className="w-10 h-10"
+                        width={40}
+                        height={40}
+                        alt={`${product.name} thumbnail image`}
+                      />
+                    ) : (
+                      <div className="w-10 h-10 bg-neutral-400" />
+                    )}
+                  </TableCell>
+                  <TableCell className="flex flex-col items-start justify-center min-w-[300px]">
+                    <p>{product.name}</p>
+                    <p className="text-xs text-muted-foreground">SKU</p>
+                  </TableCell>
+                  <TableCell className="w-40">
+                    <Input type="number" value={Number(product.price)} />
+                  </TableCell>
+                  <TableCell className="w-40">
+                    <Input type="number" value={Number(product.quantity)} />
+                  </TableCell>
+                  <TableCell className="w-12">
+                    <Switch checked={product.isActive} />
+                  </TableCell>
+                  <TableCell className="space-x-4 w-32 justify-between">
+                    <Button variant={"ghost"}>
+                      <Pencil2Icon />
+                    </Button>
+                    <Button variant={"ghost"}>
+                      <TrashIcon className="text-destructive" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-10">
+                  No products found.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
