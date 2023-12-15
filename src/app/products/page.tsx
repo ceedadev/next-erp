@@ -1,6 +1,12 @@
+import Link from "next/link";
 import Image from "next/image";
-import { asc, sql } from "drizzle-orm";
-import { TrashIcon, Pencil2Icon } from "@radix-ui/react-icons";
+import { asc, like, sql } from "drizzle-orm";
+import {
+  TrashIcon,
+  Pencil2Icon,
+  PlusIcon,
+  DownloadIcon,
+} from "@radix-ui/react-icons";
 
 import { db } from "@/db/connect";
 import { products } from "@/db/schema";
@@ -20,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import SearchInput from "@/components/search-input";
 
 export default async function ProductPage({
   searchParams,
@@ -28,22 +35,26 @@ export default async function ProductPage({
     page: string;
     perPage: number;
     sort: [string, "asc" | "desc"];
+    search: string;
   };
 }) {
   const page = Number(searchParams.page ?? 1);
   const perPage = searchParams.perPage ?? 10;
   const offset = (page - 1) * perPage;
+  const search = searchParams.search ?? "";
 
   const allProducts = await db
     .select()
     .from(products)
+    .where(like(products.name, `%${search}%`))
     .orderBy(asc(products.id))
     .limit(perPage)
     .offset(offset);
 
   const totalProducts = await db
     .select({ count: sql<number>`count(*)` })
-    .from(products);
+    .from(products)
+    .where(like(products.name, `%${search}%`));
 
   const numberOfPages = Math.ceil(totalProducts[0].count / perPage);
 
@@ -55,7 +66,18 @@ export default async function ProductPage({
           { title: "Product", href: "/products" },
         ]}
       />
-      <p>{numberOfPages}</p>
+      <div className="flex flex-row w-full justify-end space-x-4">
+        <SearchInput className="max-w-sm" />
+        <Button asChild variant={"default"}>
+          <Link href="/products/add">
+            <PlusIcon className="mr-2" />
+            <p>Add Product</p>
+          </Link>
+        </Button>
+        <Button disabled variant={"outline"}>
+          <DownloadIcon />
+        </Button>
+      </div>
       <div className="overflow-auto border md:p-4 rounded-md shadow-md">
         <Table className="overflow-scroll min-w-max">
           <TableHeader>
