@@ -1,13 +1,8 @@
 import * as React from "react";
 
-import {
-  CubeIcon,
-  ArrowTopRightIcon,
-  ArrowBottomLeftIcon,
-} from "@radix-ui/react-icons";
+import { ArrowTopRightIcon, ArrowBottomLeftIcon } from "@radix-ui/react-icons";
 
 import { Sheet } from "@/components/sheet";
-import { Button } from "@/components/ui/button";
 import { KPICard } from "@/components/kpi-card";
 import { Timeline, TimelineItem } from "@/components/timeline";
 
@@ -34,12 +29,6 @@ const TIMELINE_DUMMY_DATA = [
 export default function Home() {
   return (
     <main className="">
-      <header className="flex flex-row items-center space-x-4 h-20 bg-neutral-950 px-10">
-        <p className="text-white">Quick Menu</p>
-        <Button variant={"outline"} className="border-white p-3">
-          <CubeIcon className="text-white" />
-        </Button>
-      </header>
       <Sheet>
         <div>
           <p className="text-muted-foreground text-sm">
