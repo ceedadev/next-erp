@@ -4,7 +4,7 @@ import "./globals.css";
 
 import { cn } from "@/lib/utils";
 import { fontMono, fontPoppins, fontSans } from "@/lib/fonts";
-import { ThemeProvider } from "@/components/theme-provider";
+import { Providers } from "@/components/providers";
 import MainHeader from "@/components/layout/main-header";
 
 export const metadata: Metadata = {
@@ -27,7 +27,7 @@ export default function RootLayout({
           fontPoppins.variable
         )}
       >
-        <ThemeProvider
+        <Providers
           attribute="class"
           defaultTheme="system"
           enableSystem
@@ -35,7 +35,7 @@ export default function RootLayout({
         >
           <MainHeader />
           {children}
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );
