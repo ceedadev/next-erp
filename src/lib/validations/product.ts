@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { products } from "@/db/schema";
 
@@ -16,4 +16,6 @@ const insertProductSchema = createInsertSchema(products, {
   description: z.string().min(1, "Description is required"),
 });
 
-export { insertProductSchema as CreateProduct };
+const productSchema = createSelectSchema(products);
+
+export { insertProductSchema as CreateProduct, productSchema };

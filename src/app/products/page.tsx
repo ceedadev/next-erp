@@ -1,23 +1,15 @@
 import Link from "next/link";
-import Image from "next/image";
 import { asc, like, sql } from "drizzle-orm";
-import {
-  TrashIcon,
-  Pencil2Icon,
-  PlusIcon,
-  DownloadIcon,
-} from "@radix-ui/react-icons";
+import { PlusIcon, DownloadIcon } from "@radix-ui/react-icons";
 
-import { db } from "@/db/connect";
+import { db } from "@/db";
 import { products } from "@/db/schema";
 
 import { Sheet } from "@/components/sheet";
 import PaginationControl from "@/components/pagination-control";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -27,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import SearchInput from "@/components/search-input";
+import ProductRow from "@/components/product-row";
 
 export default async function ProductPage({
   searchParams,
@@ -93,43 +86,7 @@ export default async function ProductPage({
           <TableBody>
             {allProducts.length > 0 ? (
               allProducts.map((product) => (
-                // TODO: Refactor into client components
-                <TableRow key={product.id}>
-                  <TableCell className="w-12">
-                    {product.image ? (
-                      <Image
-                        src={product.image}
-                        className="w-10 h-10"
-                        width={40}
-                        height={40}
-                        alt={`${product.name} thumbnail image`}
-                      />
-                    ) : (
-                      <div className="w-10 h-10 bg-neutral-400" />
-                    )}
-                  </TableCell>
-                  <TableCell className="flex flex-col items-start justify-center min-w-[300px]">
-                    <p>{product.name}</p>
-                    <p className="text-xs text-muted-foreground">SKU</p>
-                  </TableCell>
-                  <TableCell className="w-40">
-                    <Input type="number" value={Number(product.price)} />
-                  </TableCell>
-                  <TableCell className="w-40">
-                    <Input type="number" value={Number(product.quantity)} />
-                  </TableCell>
-                  <TableCell className="w-12">
-                    <Switch checked={product.isActive} />
-                  </TableCell>
-                  <TableCell className="space-x-4 w-32 justify-between">
-                    <Button variant={"ghost"}>
-                      <Pencil2Icon />
-                    </Button>
-                    <Button variant={"ghost"}>
-                      <TrashIcon className="text-destructive" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                <ProductRow key={product.id} product={product} />
               ))
             ) : (
               <TableRow>
