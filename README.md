@@ -6,13 +6,31 @@ This is an opensource ERP project that designed to leverage the latest technolog
 - [DrizzleORM](https://orm.drizzle.team/) and PostgresQL.
 - [ShadCN](https://ui.shadcn.com/) component library.
 
+This project is for educational purposes, you are free to contribute or fork to make your own version.
+
 ## Getting Started
+
+You will need a PostgresQL server.
 
 Clone the Repository and install dependencies:
 
 ```bash
 git clone https://github.com/ceedadev/next-erp.git
 npm install
+```
+
+Prepare environment variable
+
+```bash
+cp .env.example .env
+```
+
+and copy your postgres connection url to .env file
+
+Perform DB Push
+
+```bash
+npm run db:push
 ```
 
 Run the development server:
