@@ -5,12 +5,13 @@ This is an opensource ERP project that designed to leverage the latest technolog
 - [NextJS](https://nextjs.org/) App Router, with TypeScript.
 - [DrizzleORM](https://orm.drizzle.team/) and PostgresQL.
 - [ShadCN](https://ui.shadcn.com/) component library.
+- [Auth.js](https://authjs.dev/) for the authentication.
 
 This project is for educational purposes, you are free to contribute or fork to make your own version.
 
 ## Getting Started
 
-You will need a PostgresQL server.
+You will need a PostgresQL server, and Github OAuth Application for AuthJS.
 
 Clone the Repository and install dependencies:
 
