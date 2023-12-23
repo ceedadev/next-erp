@@ -33,7 +33,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <MainHeader />
           {children}
         </Providers>
       </body>
