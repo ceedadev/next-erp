@@ -8,8 +8,8 @@ export default function CategoryPage() {
       <Sheet>
         <Breadcrumbs
           segments={[
-            { title: "Home", href: "/" },
-            { title: "Category", href: "/categories" },
+            { title: "Dashboard", href: "/dashboard" },
+            { title: "Category", href: "/dashboard/categories" },
           ]}
         />
       </Sheet>

@@ -55,8 +55,8 @@ export default async function ProductPage({
     <Sheet>
       <Breadcrumbs
         segments={[
-          { title: "Home", href: "/" },
-          { title: "Product", href: "/products" },
+          { title: "Dashboard", href: "/dashboard" },
+          { title: "Product", href: "/dashboard/products" },
         ]}
       />
       <div className="flex flex-row w-full justify-end space-x-4">
