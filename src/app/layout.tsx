@@ -5,7 +5,6 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { fontMono, fontPoppins, fontSans } from "@/lib/fonts";
 import { Providers } from "@/components/providers";
-import MainHeader from "@/components/layout/main-header";
 
 export const metadata: Metadata = {
   title: "ERP Next App",
