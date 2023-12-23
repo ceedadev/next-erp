@@ -1,3 +1,5 @@
+// Example from AuthJS https://github.com/nextauthjs/next-auth/tree/main/apps/examples/nextjs
+
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 
