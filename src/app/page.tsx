@@ -3,11 +3,11 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <main className="h-screen">
-      <div className="flex flex-col justify-center items-center h-full space-y-4">
+      <div className="flex flex-col justify-center items-center h-full space-y-4 p-4">
         <h1 className="text-4xl font-semibold font-poppins">
           Welcome to Next ERP
         </h1>
-        <p>
+        <p className="text-center">
           This is your Landing page, edit{" "}
           <code className="font-mono bg-muted px-2 py-1 rounded-md">
             /src/app/page.tsx
