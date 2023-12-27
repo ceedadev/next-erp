@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import { TrashIcon, Pencil2Icon } from "@radix-ui/react-icons";
 
@@ -14,6 +15,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { TableRow, TableCell } from "@/components/ui/table";
 
 export default function ProductRow({ product }: { product: Product }) {
+  const router = useRouter();
+
   const [productState, setProductState] = React.useState<Product>(product);
   const { toast } = useToast();
 
@@ -46,7 +49,7 @@ export default function ProductRow({ product }: { product: Product }) {
       </TableCell>
       <TableCell className="flex flex-col items-start justify-center min-w-[300px]">
         <p>{product.name}</p>
-        <p className="text-xs text-muted-foreground">SKU</p>
+        <p className="text-xs text-muted-foreground">{product.sku}</p>
       </TableCell>
       <TableCell className="w-40">
         <Input
@@ -71,10 +74,24 @@ export default function ProductRow({ product }: { product: Product }) {
         />
       </TableCell>
       <TableCell className="space-x-4 w-32 justify-between">
-        <Button variant={"ghost"}>
+        <Button
+          variant={"ghost"}
+          onClick={() => router.push(`/dashboard/products/${product.id}`)}
+        >
           <Pencil2Icon />
         </Button>
-        <Button variant={"ghost"}>
+        <Button
+          variant={"ghost"}
+          onClick={() => {
+            toast({
+              // TODO: Delete Product logic here
+              title: "Product Deleted",
+              description: `Product with id ${product.id} is deleted..`,
+              variant: "destructive",
+            });
+            router.refresh();
+          }}
+        >
           <TrashIcon className="text-destructive" />
         </Button>
       </TableCell>
