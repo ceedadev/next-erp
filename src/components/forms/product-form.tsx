@@ -16,12 +16,25 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 
 import { sluggify } from "@/lib/format";
-import { CreateProduct } from "@/lib/validations/product";
-import { Textarea } from "../ui/textarea";
+import { insertProduct } from "@/lib/actions/product";
+import { CreateProduct, productSchema } from "@/lib/validations/product";
+import { Icons } from "../icons";
 
-export default function ProductForm() {
+interface ProductFormProps {
+  product?: z.infer<typeof productSchema>;
+}
+
+export default function ProductForm({ product }: ProductFormProps) {
+  const { toast } = useToast();
+
+  const [isPending, startTransition] = React.useTransition();
+  // Detect if we are editing or creating a new product
+  const isEditing = Boolean(product?.id);
+
   // File input
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,19 +52,39 @@ export default function ProductForm() {
   const form = useForm<z.infer<typeof CreateProduct>>({
     resolver: zodResolver(CreateProduct),
     defaultValues: {
-      name: "",
-      price: "",
-      sku: "",
-      description: "",
-      image: null,
+      name: product?.name ?? "",
+      price: product?.price ?? "0",
+      sku: product?.sku ?? "",
+      description: product?.description ?? "",
+      image: product?.image ?? null,
     },
   });
   function onSubmit(values: z.infer<typeof CreateProduct>) {
-    if (values.name) {
-      values.slug = sluggify(values.name);
-    }
-    console.log(values);
+    startTransition(async () => {
+      if (isEditing) {
+        console.log(`Editing product with id ${product?.id}`);
+        console.log(values);
+      } else {
+        console.log("Creating product");
+        try {
+          values.slug = sluggify(values.name!);
+          await insertProduct(values);
+          toast({
+            title: "Product Created",
+            description: `${values.name} has been created successfully`,
+          });
+          form.reset();
+        } catch (error) {
+          console.log(error);
+        }
+        if (values.name) {
+          values.slug = sluggify(values.name);
+        }
+        console.log(values);
+      }
+    });
   }
+
   function onClear() {
     form.reset();
     setSelectedImage(null);
@@ -77,6 +110,7 @@ export default function ProductForm() {
                     placeholder="Product Name"
                     {...field}
                     autoComplete="off"
+                    disabled={isEditing}
                   />
                 </FormControl>
                 <FormMessage />
@@ -196,8 +230,15 @@ export default function ProductForm() {
           <Button
             className="w-full md:max-w-[240px] self-center  "
             type="submit"
+            disabled={isPending}
           >
-            Submit
+            {isPending ? (
+              <Icons.spinner className="animate-spin" />
+            ) : isEditing ? (
+              "Save"
+            ) : (
+              "Create"
+            )}
           </Button>
         </div>
       </form>

@@ -4,7 +4,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { products } from "@/db/schema";
 
 const insertProductSchema = createInsertSchema(products, {
-  id: z.number().int().positive(),
+  // id: z.number().int().positive(),
   name: z
     .string()
     .min(1, "Name is required")

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { asc, like, sql } from "drizzle-orm";
+import { asc, ilike, sql } from "drizzle-orm";
 import { PlusIcon, DownloadIcon } from "@radix-ui/react-icons";
 
 import { db } from "@/db";
@@ -39,7 +39,7 @@ export default async function ProductPage({
   const allProducts = await db
     .select()
     .from(products)
-    .where(like(products.name, `%${search}%`))
+    .where(ilike(products.name, `%${search}%`))
     .orderBy(asc(products.id))
     .limit(perPage)
     .offset(offset);
@@ -47,7 +47,7 @@ export default async function ProductPage({
   const totalProducts = await db
     .select({ count: sql<number>`count(*)` })
     .from(products)
-    .where(like(products.name, `%${search}%`));
+    .where(ilike(products.name, `%${search}%`));
 
   const numberOfPages = Math.ceil(totalProducts[0].count / perPage);
 
@@ -55,14 +55,14 @@ export default async function ProductPage({
     <Sheet>
       <Breadcrumbs
         segments={[
-          { title: "Home", href: "/" },
-          { title: "Product", href: "/products" },
+          { title: "Dashboard", href: "/dashboard" },
+          { title: "Product", href: "/dashboard/products" },
         ]}
       />
       <div className="flex flex-row w-full justify-end space-x-4">
         <SearchInput className="max-w-sm" />
         <Button asChild variant={"default"}>
-          <Link href="/products/add">
+          <Link href="/dashboard/products/add">
             <PlusIcon className="mr-2" />
             <p>Add Product</p>
           </Link>

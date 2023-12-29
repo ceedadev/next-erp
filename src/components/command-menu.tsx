@@ -42,7 +42,9 @@ export function CommandMenu() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            <CommandItem onSelect={() => router.push("/products/add")}>
+            <CommandItem
+              onSelect={() => router.push("/dashboard/products/add")}
+            >
               Add Products
             </CommandItem>
             <CommandItem>Add Customers</CommandItem>
@@ -50,7 +52,7 @@ export function CommandMenu() {
           </CommandGroup>
           <CommandSeparator />
           <CommandGroup heading="Products">
-            <CommandItem onSelect={() => router.push("/products")}>
+            <CommandItem onSelect={() => router.push("/dashboard/products")}>
               View All Products
             </CommandItem>
             <CommandItem>AB</CommandItem>

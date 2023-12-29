@@ -8,9 +8,9 @@ export default function AddProductPage() {
       <Sheet>
         <Breadcrumbs
           segments={[
-            { title: "Home", href: "/" },
-            { title: "Product", href: "/products" },
-            { title: "Add Product", href: "/products/add" },
+            { title: "Dashboard", href: "/dashboard" },
+            { title: "Product", href: "/dashboard/products" },
+            { title: "Add Product", href: "/dashboard/products/add" },
           ]}
         />
         <ProductForm />
