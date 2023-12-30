@@ -60,7 +60,10 @@ export default function DashboardSidenav() {
             {
               title: "Activities",
               variant: "ghost",
+<<<<<<< HEAD
               href: "/dashboard/activities",
+=======
+>>>>>>> 073b8f8a5dec9cb7d99b3a3877d21ccbd642cbc2
               icon: ActivitySquare,
             },
             {
