@@ -66,6 +66,7 @@ export default function DashboardSidenav() {
               title: "Invoices",
               variant: "ghost",
               icon: WalletCards,
+              href: "/dashboard/invoices",
             },
           ]}
         />
