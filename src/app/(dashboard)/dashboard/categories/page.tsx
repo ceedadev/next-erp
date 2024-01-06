@@ -39,7 +39,7 @@ export default function CategoryPage({
         ]}
       />
       <div className="flex flex-row w-full justify-end space-x-4">
-        <SearchInput className="max-w-sm" />
+        <SearchInput className="max-w-sm" placeholder="Search Category..." />
         <Button asChild variant={"default"}>
           <Link href="/dashboard/products/add">
             <PlusIcon className="mr-2" />
