@@ -36,7 +36,7 @@ export default function InvoicesPage() {
       </div>
       <div className="flex flex-col-reverse md:flex-row justify-between gap-4">
         <InvoiceTabs />
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <SearchInput className="min-w-[240px]" />
           <DatePickerWithRange />
           <Link href="/dashboard/invoices/add">
