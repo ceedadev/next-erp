@@ -52,19 +52,18 @@ export default function DashboardSidenav() {
           isCollapsed={isCollapsed}
           links={[
             {
+              //TODO: fix dashboard not being selected when on /dashboard
               title: "Dashboard",
-              variant: "ghost",
               href: "/dashboard",
               icon: LayoutDashboard,
             },
             {
               title: "Activities",
-              variant: "ghost",
               icon: ActivitySquare,
+              href: "/dashboard/activities",
             },
             {
               title: "Invoices",
-              variant: "ghost",
               icon: WalletCards,
               href: "/dashboard/invoices",
             },
@@ -76,20 +75,18 @@ export default function DashboardSidenav() {
           links={[
             {
               title: "Products",
-              variant: "ghost",
               href: "/dashboard/products",
               icon: BoxIcon,
             },
             {
               title: "Categories",
-              variant: "ghost",
               href: "/dashboard/categories",
               icon: BoxesIcon,
             },
             {
               title: "Inventory",
-              variant: "ghost",
               icon: WarehouseIcon,
+              href: "/dashboard/inventory",
             },
           ]}
         />
@@ -99,13 +96,13 @@ export default function DashboardSidenav() {
           links={[
             {
               title: "Customers",
-              variant: "ghost",
               icon: Users2Icon,
+              href: "/dashboard/customers",
             },
             {
               title: "Suppliers",
-              variant: "ghost",
               icon: Building2Icon,
+              href: "/dashboard/suppliers",
             },
           ]}
         />
