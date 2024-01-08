@@ -7,9 +7,16 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { DatePickerWithRange } from "@/components/date-range-picker";
 import SearchInput from "@/components/search-input";
+import InvoiceRow from "@/components/invoice-row";
 
 export default function InvoicesPage() {
   return (
@@ -52,17 +59,25 @@ export default function InvoicesPage() {
           <TableHeader>
             <TableRow>
               <TableHead>#</TableHead>
-              <TableHead>Customer</TableHead>
               <TableHead>Invoice Date</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Invoice Value</TableHead>
               <TableHead>Due Date</TableHead>
               <TableHead>Total Due</TableHead>
-              <TableHead>Invoice Value</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
+          <TableBody>
+            <InvoiceRow />
+            <InvoiceRow />
+            <InvoiceRow />
+            <InvoiceRow />
+            <InvoiceRow />
+          </TableBody>
         </Table>
       </div>
+      {/* TODO: ADD PAGINATION */}
     </Sheet>
   );
 }
