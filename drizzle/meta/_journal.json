@@ -22,6 +22,20 @@
       "when": 1702779325654,
       "tag": "0002_tricky_bloodstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1704601172584,
+      "tag": "0003_curious_naoko",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1704679958547,
+      "tag": "0004_confused_dorian_gray",
+      "breakpoints": true
     }
   ]
 }
