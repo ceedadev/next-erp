@@ -8,6 +8,9 @@ export default function InvoiceTabs() {
   const pathName = usePathname();
   const searchParams = useSearchParams();
 
+  // set defaultValue according to searchParams
+  const defaultValue = searchParams.get("status") ?? "all";
+
   function handleClick(value: string) {
     const params = new URLSearchParams(searchParams);
     params.set("status", value);
@@ -15,7 +18,7 @@ export default function InvoiceTabs() {
   }
 
   return (
-    <Tabs defaultValue="all">
+    <Tabs defaultValue={defaultValue}>
       <TabsList>
         <TabsTrigger onClick={() => handleClick("all")} value="all">
           All
