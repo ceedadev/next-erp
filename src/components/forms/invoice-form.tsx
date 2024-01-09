@@ -2,12 +2,17 @@
 import * as React from "react";
 
 import * as z from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { format, addDays } from "date-fns";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { SendIcon } from "lucide-react";
-import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
+import { DeleteIcon, SendIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  CaretSortIcon,
+  CheckIcon,
+  PlusIcon,
+} from "@radix-ui/react-icons";
 
 import { createInvoice } from "@/app/_actions/invoice";
 
@@ -52,6 +57,15 @@ import {
 } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "../ui/textarea";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import { Product } from "@/db/schema";
 
 const invoiceSchema = z.object({
   customer: z.number().min(1, "Please select a customer"),
@@ -64,9 +78,10 @@ const invoiceSchema = z.object({
   dueDate: z.date(),
   items: z.array(
     z.object({
-      product: z.number(),
+      productId: z.number(),
       quantity: z.number(),
       price: z.number(),
+      tax: z.string().optional(),
     })
   ),
 });
@@ -74,11 +89,18 @@ const invoiceSchema = z.object({
 interface InvoiceFormProps {
   customers: { name: string; id: number }[];
   terms: { name: string; value: string; day: number }[];
+  products: Product[];
 }
 
-export default function InvoiceForm({ customers, terms }: InvoiceFormProps) {
-  const form = useForm({
-    resolver: zodResolver(invoiceSchema),
+export default function InvoiceForm({
+  customers,
+  terms,
+  products,
+}: InvoiceFormProps) {
+  const form = useForm<z.infer<typeof invoiceSchema>>({
+    resolver: zodResolver(invoiceSchema, undefined, {
+      raw: true,
+    }),
     defaultValues: {
       customer: 0,
       address: 0,
@@ -92,14 +114,33 @@ export default function InvoiceForm({ customers, terms }: InvoiceFormProps) {
     },
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "items",
+  });
+
+  const watchItemsArray = form.watch("items");
+  const controlledItemsArray = fields.map((field, index) => ({
+    ...field,
+    ...watchItemsArray[index],
+  }));
+
   function onSubmit(values: z.infer<typeof invoiceSchema>) {
     console.log("submit clicked");
+
     createInvoice(values);
   }
+
+  //   Products Combobox
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState<Product | null>(null);
+
   return (
     <Form {...form}>
       {/* <p>{JSON.stringify(customers)}</p> */}
+      {/* <p>{JSON.stringify(products)}</p> */}
       <form
+        //   @ts-ignore
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 md:space-y-6 "
       >
@@ -147,7 +188,133 @@ export default function InvoiceForm({ customers, terms }: InvoiceFormProps) {
                 />
               </div>
               <Separator />
-              {/* TODO: ITEMS TABLE */}
+              {/*  ITEMS SEARCH COMBOBOX AND BUTTON */}
+              <div className="flex flex-row space-x-4">
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className="w-3/4 justify-between"
+                    >
+                      {value?.name || "Select product"}
+                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-full p-0"
+                    align="start"
+                    side="bottom"
+                  >
+                    <Command>
+                      <CommandInput
+                        inputMode="search"
+                        placeholder="Search product..."
+                        className="h-9"
+                      />
+                      <CommandEmpty>No Product Found</CommandEmpty>
+                      <CommandGroup>
+                        {products.map((product) => (
+                          <CommandItem
+                            value={`${product.name} ${product.sku}`}
+                            key={product.id}
+                            onSelect={() => {
+                              setValue(product);
+                              setOpen(false);
+                            }}
+                          >
+                            <p>
+                              <span className="text-xs text-muted-foreground">
+                                {product.sku}
+                              </span>{" "}
+                              {product.name}
+                            </p>
+                            <CheckIcon
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                product.id === value?.id
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <Button
+                  className="w-1/4"
+                  type="button"
+                  onClick={() =>
+                    append({
+                      productId: value!.id,
+                      quantity: 1,
+                      price: 0,
+                      //   tax: 0,
+                    })
+                  }
+                >
+                  <PlusIcon className="mr-2 h-4 w-4" />
+                  Add Item
+                </Button>
+              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Quantity</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Tax</TableHead>
+                    <TableHead>Amount</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {controlledItemsArray.map((field, index) => (
+                    <TableRow key={field.id}>
+                      <TableCell className="w-[240px]">
+                        {
+                          products.find(
+                            (product) => product.id === field.productId
+                          )?.name
+                        }
+                      </TableCell>
+                      <TableCell className="w-[140px]">
+                        <Input
+                          {...form.register(`items.${index}.quantity` as const)}
+                        />
+                      </TableCell>
+                      <TableCell className="w-[140px]">
+                        <Input
+                          {...form.register(`items.${index}.price`)}
+                          type="number"
+                          onChange={(e) =>
+                            form.setValue(
+                              `items.${index}.price`,
+                              parseInt(e.target.value)
+                            )
+                          }
+                        />
+                      </TableCell>
+                      <TableCell className="w-[140px]">
+                        <Input {...form.register(`items.${index}.tax`)} />
+                      </TableCell>
+
+                      <TableCell>
+                        <Button
+                          type="button"
+                          className="aspect-square p-0"
+                          variant={"destructive"}
+                          onClick={() => remove(index)}
+                        >
+                          <DeleteIcon className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
               <Separator />
             </CardContent>
             <CardFooter className="w-full flex flex-col">
@@ -378,6 +545,7 @@ export default function InvoiceForm({ customers, terms }: InvoiceFormProps) {
           </Card>
         </div>
       </form>
+      {form.formState.errors && <p>{JSON.stringify(form.formState.errors)}</p>}
     </Form>
   );
 }
