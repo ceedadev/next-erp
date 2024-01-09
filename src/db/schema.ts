@@ -86,6 +86,7 @@ export const customers = pgTable("customers", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt"),
   isActive: boolean("isActive").default(true).notNull(),
+  addresses: integer("addresses").references(() => addresses.id),
 });
 
 export type Customer = typeof customers.$inferSelect;
