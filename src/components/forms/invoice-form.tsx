@@ -3,7 +3,7 @@ import * as React from "react";
 
 import * as z from "zod";
 import { useForm, useFieldArray } from "react-hook-form";
-import { format, addDays } from "date-fns";
+import { format, addDays, set } from "date-fns";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { DeleteIcon, SendIcon } from "lucide-react";
@@ -76,14 +76,16 @@ const invoiceSchema = z.object({
   refNumber: z.string().optional(),
   date: z.date(),
   dueDate: z.date(),
-  items: z.array(
-    z.object({
-      productId: z.number(),
-      quantity: z.number(),
-      price: z.number(),
-      tax: z.string().optional(),
-    })
-  ),
+  items: z
+    .array(
+      z.object({
+        productId: z.number(),
+        quantity: z.number(),
+        price: z.number(),
+        tax: z.string().optional(),
+      })
+    )
+    .min(1, "Please add at least one item"),
 });
 
 interface InvoiceFormProps {
@@ -118,7 +120,6 @@ export default function InvoiceForm({
     control: form.control,
     name: "items",
   });
-
   const watchItemsArray = form.watch("items");
   const controlledItemsArray = fields.map((field, index) => ({
     ...field,
@@ -133,7 +134,9 @@ export default function InvoiceForm({
 
   //   Products Combobox
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(
+    null
+  );
 
   return (
     <Form {...form}>
@@ -198,7 +201,7 @@ export default function InvoiceForm({
                       aria-expanded={open}
                       className="w-3/4 justify-between"
                     >
-                      {value?.name || "Select product"}
+                      {selectedProduct?.name || "Select product"}
                       <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -220,7 +223,7 @@ export default function InvoiceForm({
                             value={`${product.name} ${product.sku}`}
                             key={product.id}
                             onSelect={() => {
-                              setValue(product);
+                              setSelectedProduct(product);
                               setOpen(false);
                             }}
                           >
@@ -233,7 +236,7 @@ export default function InvoiceForm({
                             <CheckIcon
                               className={cn(
                                 "ml-auto h-4 w-4",
-                                product.id === value?.id
+                                product.id === selectedProduct?.id
                                   ? "opacity-100"
                                   : "opacity-0"
                               )}
@@ -245,16 +248,18 @@ export default function InvoiceForm({
                   </PopoverContent>
                 </Popover>
                 <Button
+                  disabled={!selectedProduct}
                   className="w-1/4"
                   type="button"
-                  onClick={() =>
+                  onClick={() => {
                     append({
-                      productId: value!.id,
+                      productId: selectedProduct!.id,
                       quantity: 1,
-                      price: 0,
-                      //   tax: 0,
-                    })
-                  }
+                      price: Number(selectedProduct!.price),
+                      tax: "0",
+                    });
+                    setSelectedProduct(null);
+                  }}
                 >
                   <PlusIcon className="mr-2 h-4 w-4" />
                   Add Item
@@ -264,57 +269,115 @@ export default function InvoiceForm({
                 <TableHeader>
                   <TableRow>
                     <TableHead>Product</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Tax</TableHead>
-                    <TableHead>Amount</TableHead>
+                    <TableHead className="text-center">Quantity</TableHead>
+                    <TableHead className="text-center">Price</TableHead>
+                    <TableHead className="text-center">Tax</TableHead>
+                    <TableHead className="text-center">Total</TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {controlledItemsArray.map((field, index) => (
-                    <TableRow key={field.id}>
-                      <TableCell className="w-[240px]">
-                        {
-                          products.find(
-                            (product) => product.id === field.productId
-                          )?.name
-                        }
-                      </TableCell>
-                      <TableCell className="w-[140px]">
-                        <Input
-                          {...form.register(`items.${index}.quantity` as const)}
-                        />
-                      </TableCell>
-                      <TableCell className="w-[140px]">
-                        <Input
-                          {...form.register(`items.${index}.price`)}
-                          type="number"
-                          onChange={(e) =>
-                            form.setValue(
-                              `items.${index}.price`,
-                              parseInt(e.target.value)
-                            )
+                  {
+                    // empty state
+                    controlledItemsArray.length === 0 && (
+                      <TableRow>
+                        <TableCell className="text-center" colSpan={6}>
+                          <p className="text-muted-foreground">
+                            No items added
+                          </p>
+                          {form.formState.errors.items && (
+                            <p className="text-destructive">
+                              {form.formState.errors.items.message}
+                            </p>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  }
+                  {controlledItemsArray.map((field, index) => {
+                    const amount = field.quantity * field.price;
+                    const tax = (amount * Number(field.tax)) / 100;
+                    const total = amount + tax;
+                    return (
+                      <TableRow key={index} className="table-row">
+                        <TableCell className="min-w-[120px]">
+                          {
+                            products.find(
+                              (product) => product.id === field.productId
+                            )?.name
                           }
+                        </TableCell>
+                        <FormField
+                          control={form.control}
+                          name={`items.${index}.quantity`}
+                          render={({ field }) => (
+                            <TableCell className="w-[80px]">
+                              <Input type="number" {...field} />
+                              <FormMessage />
+                            </TableCell>
+                          )}
                         />
-                      </TableCell>
-                      <TableCell className="w-[140px]">
-                        <Input {...form.register(`items.${index}.tax`)} />
-                      </TableCell>
+                        <FormField
+                          name={`items.${index}.price`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <TableCell className="w-[140px]">
+                              <FormItem>
+                                <Input
+                                  {...field}
+                                  value={field.value}
+                                  type="number"
+                                />
+                              </FormItem>
+                            </TableCell>
+                          )}
+                        />
+                        <FormField
+                          name={`items.${index}.tax`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <TableCell>
+                              <FormItem>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder={"Tax"} />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value={"0"}>0%</SelectItem>
+                                    <SelectItem value={"10"}>10%</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormItem>
+                            </TableCell>
+                          )}
+                        />
 
-                      <TableCell>
-                        <Button
-                          type="button"
-                          className="aspect-square p-0"
-                          variant={"destructive"}
-                          onClick={() => remove(index)}
-                        >
-                          <DeleteIcon className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        <TableCell className="min-w-[100px]">
+                          {total}
+                          {/*TODO: dynamically format number from constant {Number(total).toLocaleString(navigator.language, {
+                            style: "currency",
+                            currency: "IDR",
+                          })} */}
+                        </TableCell>
+                        <TableCell className="w-[55px]">
+                          <Button
+                            type="button"
+                            className="aspect-square p-0"
+                            variant={"destructive"}
+                            onClick={() => remove(index)}
+                          >
+                            <DeleteIcon className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
+
               <Separator />
             </CardContent>
             <CardFooter className="w-full flex flex-col">
@@ -545,7 +608,7 @@ export default function InvoiceForm({
           </Card>
         </div>
       </form>
-      {form.formState.errors && <p>{JSON.stringify(form.formState.errors)}</p>}
+      {/* {form.formState.errors && <p>{JSON.stringify(form.formState.errors)}</p>} */}
     </Form>
   );
 }
