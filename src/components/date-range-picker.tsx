@@ -66,8 +66,8 @@ export function DatePickerWithRange({
 
   function onDateChange(date: DateRange) {
     const params = new URLSearchParams(searchParams);
-    params.set("startDate", format(date.from!, "yyyy-MM-dd"));
-    params.set("endDate", format(date.to!, "yyyy-MM-dd"));
+    params.set("from", format(date.from!, "yyyy-MM-dd"));
+    params.set("to", format(date.to!, "yyyy-MM-dd"));
     router.push(`${pathName}?${params.toString()}`);
   }
   //   check on date if from and to is not undefined, then update the query params

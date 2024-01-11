@@ -13,7 +13,11 @@ export default function InvoiceTabs() {
 
   function handleClick(value: string) {
     const params = new URLSearchParams(searchParams);
-    params.set("status", value);
+    if (value === "all") {
+      params.delete("status");
+    } else {
+      params.set("status", value);
+    }
     router.push(`${pathName}?${params.toString()}`);
   }
 
