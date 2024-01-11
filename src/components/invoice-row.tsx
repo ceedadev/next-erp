@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { DotsHorizontalIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
+import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -13,18 +14,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Invoice } from "@/db/schema";
 
-export default function InvoiceRow() {
+interface InvoiceRowProps {
+  invoice: Invoice;
+}
+
+export default function InvoiceRow({ invoice }: InvoiceRowProps) {
   return (
     <TableRow>
-      <TableCell>INV-24/123/323</TableCell>
-      <TableCell>18/01/2024</TableCell>
-      <TableCell>Joko Budi</TableCell>
-      <TableCell>IDR 402.000</TableCell>
-      <TableCell>18/01/2024</TableCell>
-      <TableCell>IDR 402.000</TableCell>
+      <TableCell>{invoice.number}</TableCell>
+      <TableCell>{format(invoice.date, "dd/MM/yyyy")}</TableCell>
+      <TableCell>{invoice.customer}</TableCell>
+      <TableCell>{invoice.amount}</TableCell>
+      <TableCell>{format(invoice.dueDate, "dd/MM/yyyy")}</TableCell>
+      <TableCell>{invoice.amount}</TableCell>
       <TableCell>
-        <StatusPill status="paid" />
+        <StatusPill status={invoice.status} />
       </TableCell>
       <TableCell>
         <DropdownMenu>
@@ -36,10 +42,10 @@ export default function InvoiceRow() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href="/dashboard/invoices/1">View</Link>
+              <Link href={`/dashboard/invoices/${invoice.id}`}>View</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href="/dashboard/invoices/1/edit">Edit</Link>
+              <Link href={`/dashboard/invoices/${invoice.id}/edit`}>Edit</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Payments</DropdownMenuLabel>

@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { PlusIcon } from "lucide-react";
 
-import { Sheet } from "@/components/sheet";
 import InvoiceTabs from "@/components/invoice-tabs";
+import { Sheet } from "@/components/sheet";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -18,9 +17,20 @@ import { DatePickerWithRange } from "@/components/date-range-picker";
 import SearchInput from "@/components/search-input";
 import InvoiceRow from "@/components/invoice-row";
 
-export default function InvoicesPage() {
+import { getAllInvoices } from "@/lib/fetcher/invoice";
+import { invoiceSearchParamsSchema } from "@/lib/validations/params";
+import type { SearchParams } from "@/lib/types";
+import { db } from "@/db";
+
+export default async function InvoicesPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const data = await db.query.invoices.findMany();
   return (
     <Sheet>
+      <p>{JSON.stringify(searchParams)}</p>
       <Breadcrumbs
         segments={[
           { title: "Dashboard", href: "/dashboard" },
@@ -69,11 +79,9 @@ export default function InvoicesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <InvoiceRow />
-            <InvoiceRow />
-            <InvoiceRow />
-            <InvoiceRow />
-            <InvoiceRow />
+            {data.map((invoice) => (
+              <InvoiceRow key={invoice.id} invoice={invoice} />
+            ))}
           </TableBody>
         </Table>
       </div>
