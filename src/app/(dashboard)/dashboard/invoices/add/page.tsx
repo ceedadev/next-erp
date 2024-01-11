@@ -1,6 +1,7 @@
 import { getAllCustomers } from "@/app/_actions/customer";
 import { getPaymentTerms } from "@/app/_actions/invoice";
 import { getAllActiveProducts } from "@/app/_actions/product";
+import { getTaxes } from "@/app/_actions/tax";
 
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import InvoiceForm from "@/components/forms/invoice-form";
@@ -10,6 +11,7 @@ export default async function AddInvoicePage() {
   const customers = await getAllCustomers();
   const terms = await getPaymentTerms();
   const products = await getAllActiveProducts();
+  const tax = await getTaxes();
   return (
     <Sheet>
       <Breadcrumbs
@@ -19,7 +21,12 @@ export default async function AddInvoicePage() {
           { title: "Add", href: "/dashboard/invoices/add" },
         ]}
       />
-      <InvoiceForm customers={customers} terms={terms} products={products} />
+      <InvoiceForm
+        customers={customers}
+        terms={terms}
+        products={products}
+        tax={tax}
+      />
     </Sheet>
   );
 }

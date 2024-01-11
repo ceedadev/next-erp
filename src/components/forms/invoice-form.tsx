@@ -66,6 +66,7 @@ import {
   TableRow,
 } from "../ui/table";
 import { Product } from "@/db/schema";
+import { Tax } from "@/app/_actions/tax";
 
 const invoiceSchema = z.object({
   customer: z.number().min(1, "Please select a customer"),
@@ -82,7 +83,7 @@ const invoiceSchema = z.object({
         productId: z.number(),
         quantity: z.number(),
         price: z.number(),
-        tax: z.string().optional(),
+        taxRate: z.number(),
       })
     )
     .min(1, "Please add at least one item"),
@@ -92,12 +93,14 @@ interface InvoiceFormProps {
   customers: { name: string; id: number }[];
   terms: { name: string; value: string; day: number }[];
   products: Product[];
+  tax: Tax[];
 }
 
 export default function InvoiceForm({
   customers,
   terms,
   products,
+  tax,
 }: InvoiceFormProps) {
   const form = useForm<z.infer<typeof invoiceSchema>>({
     resolver: zodResolver(invoiceSchema, undefined, {
@@ -252,19 +255,48 @@ export default function InvoiceForm({
                   className="w-1/4"
                   type="button"
                   onClick={() => {
-                    append({
-                      productId: selectedProduct!.id,
-                      quantity: 1,
-                      price: Number(selectedProduct!.price),
-                      tax: "0",
-                    });
-                    setSelectedProduct(null);
+                    // check if product quantity is 0, if so, don't add
+                    if (
+                      selectedProduct &&
+                      selectedProduct.quantity === 0 &&
+                      selectedProduct.quantity < 1
+                    ) {
+                      // throw form error
+                      return form.setError(
+                        "items",
+                        {
+                          type: "manual",
+                          message: `Product ${selectedProduct.name} is out of stock`,
+                        },
+                        {
+                          shouldFocus: true,
+                        }
+                      );
+                    } else {
+                      append({
+                        productId: selectedProduct!.id,
+                        quantity: 1,
+                        price: Number(selectedProduct!.price),
+                        taxRate: 0,
+                      });
+                      setSelectedProduct(null);
+                      setOpen(false);
+                      form.clearErrors("items");
+                    }
                   }}
                 >
                   <PlusIcon className="mr-2 h-4 w-4" />
                   Add Item
                 </Button>
               </div>
+              {
+                // error message
+                form.formState.errors.items && (
+                  <p className="text-destructive">
+                    {form.formState.errors.items.message}
+                  </p>
+                )
+              }
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -296,8 +328,8 @@ export default function InvoiceForm({
                   }
                   {controlledItemsArray.map((field, index) => {
                     const amount = field.quantity * field.price;
-                    const tax = (amount * Number(field.tax)) / 100;
-                    const total = amount + tax;
+                    const amountTax = (amount * field.taxRate) / 100;
+                    const total = amount + amountTax;
                     return (
                       <TableRow key={index} className="table-row">
                         <TableCell className="min-w-[120px]">
@@ -310,9 +342,22 @@ export default function InvoiceForm({
                         <FormField
                           control={form.control}
                           name={`items.${index}.quantity`}
-                          render={({ field }) => (
+                          render={(f) => (
                             <TableCell className="w-[80px]">
-                              <Input type="number" {...field} />
+                              <Input
+                                {...f.field}
+                                type="number"
+                                value={f.field.value}
+                                max={
+                                  products.find(
+                                    (product) => product.id === field.productId
+                                  )?.quantity || 0
+                                }
+                                min={1}
+                                onChange={(e) =>
+                                  f.field.onChange(Number(e.target.value))
+                                }
+                              />
                               <FormMessage />
                             </TableCell>
                           )}
@@ -333,21 +378,31 @@ export default function InvoiceForm({
                           )}
                         />
                         <FormField
-                          name={`items.${index}.tax`}
+                          name={`items.${index}.taxRate`}
                           control={form.control}
                           render={({ field }) => (
                             <TableCell>
                               <FormItem>
                                 <Select
-                                  onValueChange={field.onChange}
-                                  defaultValue={field.value}
+                                  onValueChange={(value) =>
+                                    field.onChange(Number(value))
+                                  }
+                                  defaultValue={tax
+                                    .find((t) => t.rate === field.value)
+                                    ?.rate.toString()}
                                 >
                                   <SelectTrigger>
                                     <SelectValue placeholder={"Tax"} />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value={"0"}>0%</SelectItem>
-                                    <SelectItem value={"10"}>10%</SelectItem>
+                                    {tax.map((t) => (
+                                      <SelectItem
+                                        value={t.rate.toString()}
+                                        key={t.id}
+                                      >
+                                        {t.name}
+                                      </SelectItem>
+                                    ))}
                                   </SelectContent>
                                 </Select>
                               </FormItem>
@@ -607,8 +662,10 @@ export default function InvoiceForm({
             </CardFooter>
           </Card>
         </div>
+        {form.formState.errors && (
+          <p>{JSON.stringify(form.formState.errors)}</p>
+        )}
       </form>
-      {/* {form.formState.errors && <p>{JSON.stringify(form.formState.errors)}</p>} */}
     </Form>
   );
 }
