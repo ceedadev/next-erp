@@ -1,5 +1,8 @@
 import { getAllCustomers } from "@/app/_actions/customer";
-import { getPaymentTerms } from "@/app/_actions/invoice";
+import {
+  getLatestInvoiceNumber,
+  getPaymentTerms,
+} from "@/app/_actions/invoice";
 import { getAllActiveProducts } from "@/app/_actions/product";
 import { getTaxes } from "@/app/_actions/tax";
 
@@ -12,6 +15,7 @@ export default async function AddInvoicePage() {
   const terms = await getPaymentTerms();
   const products = await getAllActiveProducts();
   const tax = await getTaxes();
+  const number = await getLatestInvoiceNumber();
   return (
     <Sheet>
       <Breadcrumbs
@@ -26,6 +30,7 @@ export default async function AddInvoicePage() {
         terms={terms}
         products={products}
         tax={tax}
+        number={number}
       />
     </Sheet>
   );

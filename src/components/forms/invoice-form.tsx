@@ -6,12 +6,15 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { format, addDays, set } from "date-fns";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { invoiceSchema } from "@/lib/validations/invoice";
+
 import { DeleteIcon, SendIcon } from "lucide-react";
 import {
   CalendarIcon,
   CaretSortIcon,
   CheckIcon,
   PlusIcon,
+  Cross2Icon,
 } from "@radix-ui/react-icons";
 
 import { createInvoice } from "@/app/_actions/invoice";
@@ -68,32 +71,12 @@ import {
 import { Product } from "@/db/schema";
 import { Tax } from "@/app/_actions/tax";
 
-const invoiceSchema = z.object({
-  customer: z.number().min(1, "Please select a customer"),
-  address: z.number(),
-  number: z.string(),
-  term: z.string(),
-  note: z.string().optional(),
-  refNumber: z.string().optional(),
-  date: z.date(),
-  dueDate: z.date(),
-  items: z
-    .array(
-      z.object({
-        productId: z.number(),
-        quantity: z.number(),
-        price: z.number(),
-        taxRate: z.number(),
-      })
-    )
-    .min(1, "Please add at least one item"),
-});
-
 interface InvoiceFormProps {
   customers: { name: string; id: number }[];
   terms: { name: string; value: string; day: number }[];
   products: Product[];
   tax: Tax[];
+  number: string;
 }
 
 export default function InvoiceForm({
@@ -101,6 +84,7 @@ export default function InvoiceForm({
   terms,
   products,
   tax,
+  number,
 }: InvoiceFormProps) {
   const form = useForm<z.infer<typeof invoiceSchema>>({
     resolver: zodResolver(invoiceSchema, undefined, {
@@ -109,7 +93,7 @@ export default function InvoiceForm({
     defaultValues: {
       customer: 0,
       address: 0,
-      number: "",
+      number: number,
       note: "",
       refNumber: "",
       term: "cbd",
@@ -140,6 +124,31 @@ export default function InvoiceForm({
   const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(
     null
   );
+
+  // Invoice Summary
+  const subTotalInvoice = () => {
+    let total = 0;
+    controlledItemsArray.forEach((item) => {
+      total += item.price * item.quantity;
+    });
+    return total;
+  };
+  const totalTaxInvoice = () => {
+    let total = 0;
+    controlledItemsArray.forEach((item) => {
+      total += (item.price * item.quantity * item.taxRate) / 100;
+    });
+    return total;
+  };
+  const totalInvoice = () => {
+    let total = 0;
+    controlledItemsArray.forEach((item) => {
+      total +=
+        item.price * item.quantity +
+        (item.price * item.quantity * item.taxRate) / 100;
+    });
+    return total;
+  };
 
   return (
     <Form {...form}>
@@ -172,7 +181,7 @@ export default function InvoiceForm({
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel>Invoice Number</FormLabel>
-                      <Input {...field} />
+                      <Input {...field} disabled />
                       <FormDescription>Invoice Number</FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -250,6 +259,19 @@ export default function InvoiceForm({
                     </Command>
                   </PopoverContent>
                 </Popover>
+                <Button
+                  disabled={!selectedProduct}
+                  className="aspect-square p-0 "
+                  type="button"
+                  variant={"outline"}
+                  onClick={() => {
+                    setSelectedProduct(null);
+                    setOpen(false);
+                    form.clearErrors("items");
+                  }}
+                >
+                  <Cross2Icon className="h-4 w-4" />
+                </Button>
                 <Button
                   disabled={!selectedProduct}
                   className="w-1/4"
@@ -333,11 +355,24 @@ export default function InvoiceForm({
                     return (
                       <TableRow key={index} className="table-row">
                         <TableCell className="min-w-[120px]">
-                          {
-                            products.find(
-                              (product) => product.id === field.productId
-                            )?.name
-                          }
+                          <div className="flex flex-col w-full">
+                            <p>
+                              {
+                                products.find(
+                                  (product) => product.id === field.productId
+                                )?.name
+                              }
+                            </p>
+                            <p>
+                              <span className="text-xs text-muted-foreground">
+                                {
+                                  products.find(
+                                    (product) => product.id === field.productId
+                                  )?.sku
+                                }
+                              </span>
+                            </p>
+                          </div>
                         </TableCell>
                         <FormField
                           control={form.control}
@@ -346,7 +381,7 @@ export default function InvoiceForm({
                             <TableCell className="w-[80px]">
                               <Input
                                 {...f.field}
-                                type="number"
+                                type={"number"}
                                 value={f.field.value}
                                 max={
                                   products.find(
@@ -371,7 +406,9 @@ export default function InvoiceForm({
                                 <Input
                                   {...field}
                                   value={field.value}
-                                  type="number"
+                                  onChange={(e) =>
+                                    field.onChange(Number(e.target.value))
+                                  }
                                 />
                               </FormItem>
                             </TableCell>
@@ -381,7 +418,7 @@ export default function InvoiceForm({
                           name={`items.${index}.taxRate`}
                           control={form.control}
                           render={({ field }) => (
-                            <TableCell>
+                            <TableCell className="w-[80px]">
                               <FormItem>
                                 <Select
                                   onValueChange={(value) =>
@@ -410,8 +447,8 @@ export default function InvoiceForm({
                           )}
                         />
 
-                        <TableCell className="min-w-[100px]">
-                          {total}
+                        <TableCell className="w-[120px] text-right">
+                          {total.toLocaleString()}
                           {/*TODO: dynamically format number from constant {Number(total).toLocaleString(navigator.language, {
                             style: "currency",
                             currency: "IDR",
@@ -420,8 +457,8 @@ export default function InvoiceForm({
                         <TableCell className="w-[55px]">
                           <Button
                             type="button"
-                            className="aspect-square p-0"
-                            variant={"destructive"}
+                            className="aspect-square p-0 text-destructive hover:bg-destructive hover:text-white"
+                            variant={"outline"}
                             onClick={() => remove(index)}
                           >
                             <DeleteIcon className="h-4 w-4" />
@@ -641,13 +678,19 @@ export default function InvoiceForm({
                 <div className=" flex flex-row w-full justify-between">
                   <p>Subtotal</p>
                   <p>
-                    IDR <span className="font-semibold">1.234.567</span>
+                    IDR{" "}
+                    <span className="font-semibold">
+                      {subTotalInvoice().toLocaleString()}
+                    </span>
                   </p>
                 </div>
                 <div className=" flex flex-row w-full justify-between">
-                  <p>Tax (0%)</p>
+                  <p>Tax</p>
                   <p>
-                    IDR <span className="font-semibold">0</span>
+                    IDR{" "}
+                    <span className="font-semibold">
+                      {totalTaxInvoice().toLocaleString()}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -656,15 +699,19 @@ export default function InvoiceForm({
               <div className="flex flex-row justify-between w-full text-lg">
                 <p>Total</p>
                 <p>
-                  IDR <span className="font-semibold">1.234.567</span>
+                  IDR{" "}
+                  <span className="font-semibold">
+                    {totalInvoice().toLocaleString()}
+                  </span>
                 </p>
               </div>
             </CardFooter>
           </Card>
         </div>
+        {/* //FORM DEBUG
         {form.formState.errors && (
           <p>{JSON.stringify(form.formState.errors)}</p>
-        )}
+        )} */}
       </form>
     </Form>
   );
