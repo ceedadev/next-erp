@@ -24,14 +24,9 @@ export const invoiceSchema = z.object({
 export const getInvoicesSchema = z.object({
   limit: z.number().default(10),
   offset: z.number().default(0),
-  from: z
-    .string()
-    .transform((val) => new Date(val))
-    .nullable(),
-  to: z
-    .string()
-    .transform((val) => new Date(val))
-    .nullable(),
+  fromDay: z.date().optional().nullable(),
+  toDay: z.date().optional().nullable(),
   status: z.enum(["unpaid", "paid", "overdue"]).optional().nullable(),
   search: z.string().optional().nullable(),
+  sort: z.string().optional().nullable(),
 });

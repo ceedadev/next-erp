@@ -14,18 +14,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Invoice } from "@/db/schema";
+import { Customer, Invoice } from "@/db/schema";
 
 interface InvoiceRowProps {
   invoice: Invoice;
+  customer: Customer | null;
 }
 
-export default function InvoiceRow({ invoice }: InvoiceRowProps) {
+export default function InvoiceRow({ invoice, customer }: InvoiceRowProps) {
   return (
     <TableRow>
       <TableCell>{invoice.number}</TableCell>
       <TableCell>{format(invoice.date, "dd/MM/yyyy")}</TableCell>
-      <TableCell>{invoice.customer}</TableCell>
+      <TableCell>{customer?.name}</TableCell>
       <TableCell>{invoice.amount}</TableCell>
       <TableCell>{format(invoice.dueDate, "dd/MM/yyyy")}</TableCell>
       <TableCell>{invoice.amount}</TableCell>

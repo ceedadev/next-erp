@@ -1,10 +1,10 @@
 "use server";
 
 import * as z from "zod";
-import { eq, and, lte, gte, desc, sql } from "drizzle-orm";
+import { eq, and, lte, gte, desc, sql, asc, or, ilike } from "drizzle-orm";
 
 import { db } from "@/db";
-import { customers, invoices } from "@/db/schema";
+import { Invoice, customers, invoices } from "@/db/schema";
 
 import { getInvoicesSchema } from "@/lib/validations/invoice";
 import { unstable_noStore as noStore } from "next/cache";
@@ -12,6 +12,11 @@ import { unstable_noStore as noStore } from "next/cache";
 export async function getAllInvoices(input: z.infer<typeof getInvoicesSchema>) {
   noStore();
   try {
+    const [column, order] = (input.sort?.split(".") as [
+      keyof Invoice | undefined,
+      "asc" | "desc" | undefined
+    ]) ?? ["createdAt", "desc"];
+
     const transaction = await db.transaction(async (tx) => {
       const data = await tx
         .select()
@@ -21,12 +26,29 @@ export async function getAllInvoices(input: z.infer<typeof getInvoicesSchema>) {
         .leftJoin(customers, eq(invoices.customer, customers.id))
         .where(
           and(
-            input.from ? gte(invoices.date, input.from) : undefined,
-            input.to ? lte(invoices.date, input.to) : undefined,
-            input.status ? eq(invoices.status, input.status) : undefined
+            // filter by customer name
+            input.search
+              ? ilike(customers.name, `%${input.search}%`)
+              : undefined,
+            // filter by status
+            input.status ? eq(invoices.status, input.status) : undefined,
+            // filter by invoice date
+            input.fromDay && input.toDay
+              ? and(
+                  gte(invoices.date, input.fromDay),
+                  lte(invoices.date, input.toDay)
+                )
+              : undefined
           )
         )
-        .orderBy(desc(invoices.date));
+        .orderBy(
+          column && column in invoices
+            ? order === "asc"
+              ? asc(invoices[column])
+              : desc(invoices[column])
+            : desc(invoices.createdAt)
+        );
+
       const count = await tx
         .select({
           count: sql<number>`count(*)`,
@@ -34,9 +56,19 @@ export async function getAllInvoices(input: z.infer<typeof getInvoicesSchema>) {
         .from(invoices)
         .where(
           and(
-            input.from ? gte(invoices.date, input.from) : undefined,
-            input.to ? lte(invoices.date, input.to) : undefined,
-            input.status ? eq(invoices.status, input.status) : undefined
+            // filter by customer name
+            input.search
+              ? ilike(customers.name, `%${input.search}%`)
+              : undefined,
+            // filter by status
+            input.status ? eq(invoices.status, input.status) : undefined,
+            // filter by invoice date
+            input.fromDay && input.toDay
+              ? and(
+                  gte(invoices.date, input.fromDay),
+                  lte(invoices.date, input.toDay)
+                )
+              : undefined
           )
         )
         .execute()

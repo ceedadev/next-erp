@@ -18,7 +18,10 @@ import SearchInput from "@/components/search-input";
 import InvoiceRow from "@/components/invoice-row";
 
 import { getAllInvoices } from "@/lib/fetcher/invoice";
-import { invoiceSearchParamsSchema } from "@/lib/validations/params";
+import {
+  invoiceSearchParamsSchema,
+  searchParamsSchema,
+} from "@/lib/validations/params";
 import type { SearchParams } from "@/lib/types";
 import { db } from "@/db";
 
@@ -27,10 +30,32 @@ export default async function InvoicesPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const data = await db.query.invoices.findMany();
+  const { page, perPage, sort, search, from, to, status } =
+    invoiceSearchParamsSchema.parse(searchParams);
+
+  // Invoices
+  const pageAsNumber = Number(page);
+  const fallbackPage =
+    isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
+  const perPageAsNumber = Number(perPage);
+  const limit = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
+  const offset = fallbackPage > 0 ? (fallbackPage - 1) * limit : 0;
+  const fromDay = from ? new Date(from) : undefined;
+  const toDay = to ? new Date(to) : undefined;
+
+  const { data, count, pageCount } = await getAllInvoices({
+    limit,
+    offset,
+    search,
+    sort,
+    fromDay,
+    toDay,
+    status,
+  });
+
   return (
     <Sheet>
-      <p>{JSON.stringify(searchParams)}</p>
+      {/* <p>{JSON.stringify(data)}</p> */}
       <Breadcrumbs
         segments={[
           { title: "Dashboard", href: "/dashboard" },
@@ -42,13 +67,13 @@ export default async function InvoicesPage({
           <p className="text-sm font-semibold text-muted-foreground">
             Total Invoices
           </p>
-          <p className="text-2xl font-bold">12</p>
+          <p className="text-2xl font-bold">{count}</p>
         </Card>
         <Card className="h-28 w-56 p-4">
           <p className="text-sm font-semibold text-muted-foreground">
             Total Overdue
           </p>
-          <p className="text-xl font-bold">IDR 123.456.789</p>
+          <p className="text-xl font-bold">{}</p>
         </Card>
       </div>
       <div className="flex flex-col-reverse md:flex-row justify-between gap-4">
@@ -79,8 +104,12 @@ export default async function InvoicesPage({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((invoice) => (
-              <InvoiceRow key={invoice.id} invoice={invoice} />
+            {data.map((item, index) => (
+              <InvoiceRow
+                key={index}
+                invoice={item.invoices}
+                customer={item.customers}
+              />
             ))}
           </TableBody>
         </Table>
