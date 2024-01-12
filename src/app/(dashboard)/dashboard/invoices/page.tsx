@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PlusIcon } from "lucide-react";
+import { startOfDay, endOfDay } from "date-fns";
 
 import InvoiceTabs from "@/components/invoice-tabs";
 import { Sheet } from "@/components/sheet";
@@ -24,6 +25,7 @@ import {
 } from "@/lib/validations/params";
 import type { SearchParams } from "@/lib/types";
 import { db } from "@/db";
+import PaginationControl from "@/components/pagination-control";
 
 export default async function InvoicesPage({
   searchParams,
@@ -40,8 +42,8 @@ export default async function InvoicesPage({
   const perPageAsNumber = Number(perPage);
   const limit = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
   const offset = fallbackPage > 0 ? (fallbackPage - 1) * limit : 0;
-  const fromDay = from ? new Date(from) : undefined;
-  const toDay = to ? new Date(to) : undefined;
+  const fromDay = from ? startOfDay(new Date(from)) : undefined;
+  const toDay = to ? endOfDay(new Date(to)) : undefined;
 
   const { data, count, pageCount } = await getAllInvoices({
     limit,
@@ -55,7 +57,6 @@ export default async function InvoicesPage({
 
   return (
     <Sheet>
-      {/* <p>{JSON.stringify(data)}</p> */}
       <Breadcrumbs
         segments={[
           { title: "Dashboard", href: "/dashboard" },
@@ -115,6 +116,11 @@ export default async function InvoicesPage({
         </Table>
       </div>
       {/* TODO: ADD PAGINATION */}
+      <PaginationControl
+        hasNextPage={page < pageCount}
+        hasPrevPage={page > 1}
+        totalPages={pageCount}
+      />
     </Sheet>
   );
 }

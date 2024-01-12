@@ -1,13 +1,25 @@
 "use server";
 
 import * as z from "zod";
-import { eq, and, lte, gte, desc, sql, asc, or, ilike } from "drizzle-orm";
+import { unstable_noStore as noStore } from "next/cache";
+import {
+  eq,
+  and,
+  lte,
+  gte,
+  desc,
+  sql,
+  asc,
+  or,
+  ilike,
+  gt,
+  lt,
+} from "drizzle-orm";
 
 import { db } from "@/db";
-import { Invoice, customers, invoices } from "@/db/schema";
+import { type Invoice, customers, invoices } from "@/db/schema";
 
 import { getInvoicesSchema } from "@/lib/validations/invoice";
-import { unstable_noStore as noStore } from "next/cache";
 
 export async function getAllInvoices(input: z.infer<typeof getInvoicesSchema>) {
   noStore();
@@ -54,6 +66,7 @@ export async function getAllInvoices(input: z.infer<typeof getInvoicesSchema>) {
           count: sql<number>`count(*)`,
         })
         .from(invoices)
+        .leftJoin(customers, eq(invoices.customer, customers.id))
         .where(
           and(
             // filter by customer name
