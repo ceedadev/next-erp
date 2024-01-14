@@ -120,6 +120,7 @@ export default async function InvoicesPage({
         hasNextPage={page < pageCount}
         hasPrevPage={page > 1}
         totalPages={pageCount}
+        count={count}
       />
     </Sheet>
   );
