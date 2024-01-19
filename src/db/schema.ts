@@ -10,6 +10,7 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { createId } from "@paralleldrive/cuid2";
+import { relations } from "drizzle-orm";
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
@@ -62,7 +63,17 @@ export const invoices = pgTable("invoices", {
   updatedAt: timestamp("updatedAt"),
   customer: integer("customer").references(() => customers.id),
   address: integer("address").references(() => addresses.id),
+  note: text("note").default(""),
+  reference: varchar("reference", { length: 255 }).default(""),
 });
+
+export const invoiceRelations = relations(invoices, ({ many, one }) => ({
+  items: many(invoiceItems),
+  customer: one(customers, {
+    fields: [invoices.customer],
+    references: [customers.id],
+  }),
+}));
 
 export type Invoice = typeof invoices.$inferSelect;
 export type NewInvoice = typeof invoices.$inferInsert;
@@ -78,6 +89,17 @@ export const invoiceItems = pgTable("invoiceItems", {
   ),
 });
 
+export const invoiceItemRelations = relations(invoiceItems, ({ one }) => ({
+  invoice: one(invoices, {
+    fields: [invoiceItems.invoiceId],
+    references: [invoices.id],
+  }),
+  product: one(products, {
+    fields: [invoiceItems.product],
+    references: [products.id],
+  }),
+}));
+
 export const customers = pgTable("customers", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull().default(""),
@@ -88,6 +110,11 @@ export const customers = pgTable("customers", {
   isActive: boolean("isActive").default(true).notNull(),
   addresses: integer("addresses").references(() => addresses.id),
 });
+
+export const customerRelations = relations(customers, ({ many }) => ({
+  addresses: many(addresses),
+  invoices: many(invoices),
+}));
 
 export type Customer = typeof customers.$inferSelect;
 export type NewCustomer = typeof customers.$inferInsert;

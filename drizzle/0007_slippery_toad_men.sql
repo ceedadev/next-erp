@@ -1,0 +1,1 @@
+ALTER TABLE "invoices" ADD COLUMN "reference" varchar(255) DEFAULT '';
