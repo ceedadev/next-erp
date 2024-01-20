@@ -56,5 +56,10 @@ We welcome contributions from the community! If you'd like to contribute, please
   - [ ] List All Customer
   - [ ] Add Customer
   - [ ] Edit Customer
+- [ ] Invoice Page
+  - [x] List All Invoice
+  - [x] Add Invoice
+  - [ ] Edit Invoice
+  - [ ] Payment details in invoice
 
 and more...
