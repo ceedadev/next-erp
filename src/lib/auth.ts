@@ -4,11 +4,14 @@ import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 
 import type { NextAuthConfig } from "next-auth";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { db } from "@/db";
 
 export const config = {
   theme: {
     logo: "https://next-auth.js.org/img/logo/logo-sm.png",
   },
+  adapter: DrizzleAdapter(db),
   providers: [GitHub],
   callbacks: {
     authorized({ request, auth }) {
