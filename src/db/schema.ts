@@ -8,12 +8,67 @@ import {
   timestamp,
   pgTable,
   pgEnum,
+  uuid,
+  primaryKey,
 } from "drizzle-orm/pg-core";
-import { createId } from "@paralleldrive/cuid2";
+// import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
+import type { AdapterAccount } from "@auth/core/adapters";
+
+export const tenants = pgTable("tenants", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull().default(""),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt"),
+  isActive: boolean("isActive").default(true).notNull(),
+});
+
+export const users = pgTable("users", {
+  id: text("id").notNull().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  image: text("image"),
+});
+
+export const accounts = pgTable(
+  "accounts",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type").$type<AdapterAccount["type"]>().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
+  },
+  (account) => ({
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+  })
+);
+
+export const verificationTokens = pgTable(
+  "verificationToken",
+  {
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (vt) => ({
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  })
+);
 
 export const products = pgTable("products", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull().default(""),
   sku: varchar("sku", { length: 128 }).notNull().default(""),
   slug: varchar("slug", { length: 255 }),
@@ -24,14 +79,14 @@ export const products = pgTable("products", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt"),
   isActive: boolean("isActive").default(true).notNull(),
-  categoryId: integer("categoryId").references(() => categories.id),
+  categoryId: uuid("categoryId").references(() => categories.id),
 });
 
 export type Product = typeof products.$inferSelect;
 export type NewProduct = typeof products.$inferInsert;
 
 export const categories = pgTable("categories", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull().default(""),
   slug: varchar("slug", { length: 255 }),
   description: text("description"),
@@ -51,9 +106,7 @@ export const InvoiceStatusEnum = pgEnum("invoiceStatus", [
 ]);
 
 export const invoices = pgTable("invoices", {
-  id: varchar("id", { length: 128 })
-    .primaryKey()
-    .$defaultFn(() => createId()),
+  id: uuid("id").defaultRandom().primaryKey(),
   number: varchar("number", { length: 255 }).notNull().default(""),
   date: timestamp("date").defaultNow().notNull(),
   dueDate: timestamp("dueDate").defaultNow().notNull(),
@@ -61,8 +114,8 @@ export const invoices = pgTable("invoices", {
   status: InvoiceStatusEnum("status").default("unpaid").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt"),
-  customer: integer("customer").references(() => customers.id),
-  address: integer("address").references(() => addresses.id),
+  customer: uuid("customer").references(() => customers.id),
+  address: uuid("address").references(() => addresses.id),
   note: text("note").default(""),
   reference: varchar("reference", { length: 255 }).default(""),
 });
@@ -79,14 +132,12 @@ export type Invoice = typeof invoices.$inferSelect;
 export type NewInvoice = typeof invoices.$inferInsert;
 
 export const invoiceItems = pgTable("invoiceItems", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   description: text("description").default("").notNull(),
   quantity: integer("quantity").default(0).notNull(),
   price: decimal("price").default("0").notNull(),
-  product: integer("product").references(() => products.id),
-  invoiceId: varchar("invoiceId", { length: 128 }).references(
-    () => invoices.id
-  ),
+  product: uuid("product").references(() => products.id),
+  invoiceId: uuid("invoiceId").references(() => invoices.id),
 });
 
 export const invoiceItemRelations = relations(invoiceItems, ({ one }) => ({
@@ -101,18 +152,18 @@ export const invoiceItemRelations = relations(invoiceItems, ({ one }) => ({
 }));
 
 export const customers = pgTable("customers", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull().default(""),
   email: varchar("email", { length: 255 }).notNull().default(""),
   phone: varchar("phone", { length: 255 }).notNull().default(""),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt"),
   isActive: boolean("isActive").default(true).notNull(),
-  addresses: integer("addresses").references(() => addresses.id),
+  addresses: uuid("addresses").references(() => addresses.id),
 });
 
 export const customerRelations = relations(customers, ({ many }) => ({
-  addresses: many(addresses),
+  // addresses: many(addresses),
   invoices: many(invoices),
 }));
 
@@ -120,7 +171,7 @@ export type Customer = typeof customers.$inferSelect;
 export type NewCustomer = typeof customers.$inferInsert;
 
 export const addresses = pgTable("addresses", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   line1: varchar("line1", { length: 255 }).notNull().default(""),
   line2: varchar("line2", { length: 255 }).notNull().default(""),
   city: varchar("city", { length: 255 }).notNull().default(""),
