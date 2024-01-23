@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -105,6 +106,13 @@ export default async function InvoicesPage({
             </TableRow>
           </TableHeader>
           <TableBody>
+            {data.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8">
+                  No invoices found.
+                </TableCell>
+              </TableRow>
+            )}
             {data.map((item, index) => (
               <InvoiceRow
                 key={index}
