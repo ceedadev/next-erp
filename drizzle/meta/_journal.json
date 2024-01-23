@@ -61,36 +61,8 @@
     {
       "idx": 8,
       "version": "5",
-      "when": 1705898730570,
-      "tag": "0008_daily_albert_cleary",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "5",
-      "when": 1705901020008,
-      "tag": "0009_eager_scourge",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "5",
-      "when": 1705901076328,
-      "tag": "0010_productive_mac_gargan",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "5",
-      "when": 1705904397176,
-      "tag": "0011_swift_true_believers",
-      "breakpoints": true
-    },
-    {
-      "idx": 12,
-      "version": "5",
-      "when": 1705904458816,
-      "tag": "0012_nebulous_jack_power",
+      "when": 1705972064728,
+      "tag": "0008_famous_gauntlet",
       "breakpoints": true
     }
   ]

@@ -1,1 +1,0 @@
-ALTER TABLE "invoiceItems" ALTER COLUMN "invoiceId" SET DATA TYPE uuid;

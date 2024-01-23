@@ -15,7 +15,7 @@ import {
 import { relations } from "drizzle-orm";
 import type { AdapterAccount } from "@auth/core/adapters";
 
-export const tenants = pgTable("tenants", {
+export const tenants = pgTable("tenant", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull().default(""),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -23,7 +23,7 @@ export const tenants = pgTable("tenants", {
   isActive: boolean("isActive").default(true).notNull(),
 });
 
-export const users = pgTable("users", {
+export const users = pgTable("user", {
   id: text("id").notNull().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
@@ -32,7 +32,7 @@ export const users = pgTable("users", {
 });
 
 export const accounts = pgTable(
-  "accounts",
+  "account",
   {
     userId: text("userId")
       .notNull()
@@ -54,6 +54,14 @@ export const accounts = pgTable(
     }),
   })
 );
+
+export const sessions = pgTable("session", {
+  sessionToken: text("sessionToken").notNull().primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
+});
 
 export const verificationTokens = pgTable(
   "verificationToken",
