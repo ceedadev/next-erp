@@ -194,7 +194,7 @@ export default function ProductForm({ product }: ProductFormProps) {
               <div className="flex flex-col gap-2 min-w-[300px]">
                 <FormLabel>Product Image</FormLabel>
                 <FormDescription>
-                  Stock Keeping Unit, must be unique.
+                  Product image, can be changed later.
                 </FormDescription>
               </div>
               <div className="flex flex-col w-full space-y-2">
@@ -237,7 +237,7 @@ export default function ProductForm({ product }: ProductFormProps) {
             ) : isEditing ? (
               "Save"
             ) : (
-              "Create"
+              "Add"
             )}
           </Button>
         </div>
