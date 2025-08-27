@@ -1,25 +1,31 @@
-// Example from AuthJS https://github.com/nextauthjs/next-auth/tree/main/apps/examples/nextjs
-
-import NextAuth from "next-auth";
-import GitHub from "next-auth/providers/github";
-
-import type { NextAuthConfig } from "next-auth";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
+import * as schema from "@/db/schema";
 
-export const config = {
-  theme: {
-    logo: "https://next-auth.js.org/img/logo/logo-sm.png",
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "pg",
+    schema: schema,
+    usePlural: true,
+  }),
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: false,
   },
-  adapter: DrizzleAdapter(db),
-  providers: [GitHub],
-  callbacks: {
-    authorized({ request, auth }) {
-      const { pathname } = request.nextUrl;
-      if (pathname === "/middleware-example") return !!auth;
-      return true;
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // 1 day (update session expiry after 1 day of inactivity)
+  },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "user",
+      },
     },
   },
-} satisfies NextAuthConfig;
+});
 
-export const { handlers, auth, signIn, signOut } = NextAuth(config);
+export type Session = typeof auth.$Infer.Session;
+export type User = typeof auth.$Infer.Session.user;
