@@ -1,21 +1,22 @@
-import { eq } from "drizzle-orm";
+import { notFound } from "next/navigation";
 
-import { db } from "@/db";
-import { products } from "@/db/schema";
-
+import { getProductById } from "@/lib/actions/product";
 import { Sheet } from "@/components/sheet";
-import ProductForm from "@/components/forms/product-form";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import ProductForm from "@/components/forms/product-form";
 
-export default async function EditProductPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const id = params.id;
-  const product = await db.query.products.findFirst({
-    where: eq(products.id, Number(id)),
-  });
+interface EditProductPageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function EditProductPage({ params }: EditProductPageProps) {
+  const product = await getProductById(params.id);
+
+  if (!product) {
+    notFound();
+  }
 
   return (
     <Sheet>
@@ -23,10 +24,12 @@ export default async function EditProductPage({
         segments={[
           { title: "Dashboard", href: "/dashboard" },
           { title: "Products", href: "/dashboard/products" },
-          { title: `Edit ${product?.name}`, href: `/dashboard/products/${id}` },
+          { title: "Edit Product", href: `/dashboard/products/${params.id}` },
         ]}
       />
-      <ProductForm product={product} />
+      <div className="border rounded-md shadow-md">
+        <ProductForm product={product} />
+      </div>
     </Sheet>
   );
 }

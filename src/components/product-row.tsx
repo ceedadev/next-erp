@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { TrashIcon, Pencil2Icon } from "@radix-ui/react-icons";
 
 import { Product } from "@/db/schema";
+import { deleteProduct } from "@/lib/actions/product";
 
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -82,14 +83,20 @@ export default function ProductRow({ product }: { product: Product }) {
         </Button>
         <Button
           variant={"ghost"}
-          onClick={() => {
-            toast({
-              // TODO: Delete Product logic here
-              title: "Product Deleted",
-              description: `Product with id ${product.id} is deleted..`,
-              variant: "destructive",
-            });
-            router.refresh();
+          onClick={async () => {
+            try {
+              await deleteProduct(product.id);
+              toast({
+                title: "Product Deleted",
+                description: `${product.name} has been deleted successfully`,
+              });
+            } catch (error) {
+              toast({
+                title: "Error",
+                description: "Failed to delete product",
+                variant: "destructive",
+              });
+            }
           }}
         >
           <TrashIcon className="text-destructive" />

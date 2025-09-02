@@ -102,6 +102,7 @@ export default async function ProductPage({
         totalPages={numberOfPages}
         hasNextPage={page < numberOfPages}
         hasPrevPage={page > 1}
+        count={totalProducts[0].count}
       />
     </Sheet>
   );

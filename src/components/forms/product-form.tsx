@@ -20,7 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 
 import { sluggify } from "@/lib/format";
-import { insertProduct } from "@/lib/actions/product";
+import { insertProduct, updateProduct } from "@/lib/actions/product";
 import { CreateProduct, productSchema } from "@/lib/validations/product";
 import { Icons } from "../icons";
 
@@ -61,26 +61,38 @@ export default function ProductForm({ product }: ProductFormProps) {
   });
   function onSubmit(values: z.infer<typeof CreateProduct>) {
     startTransition(async () => {
-      if (isEditing) {
-        console.log(`Editing product with id ${product?.id}`);
-        console.log(values);
-      } else {
-        console.log("Creating product");
-        try {
-          values.slug = sluggify(values.name!);
+      try {
+        const formData = new FormData();
+        formData.append("name", values.name || "");
+        formData.append("price", values.price || "0");
+        formData.append("sku", values.sku || "");
+        formData.append("description", values.description || "");
+        if (values.image) {
+          formData.append("image", values.image);
+        }
+
+        if (isEditing && product?.id) {
+          await updateProduct(product.id, formData);
+          toast({
+            title: "Product Updated",
+            description: `${values.name} has been updated successfully`,
+          });
+        } else {
+          values.slug = sluggify(values.name || "");
           await insertProduct(values);
           toast({
             title: "Product Created",
             description: `${values.name} has been created successfully`,
           });
           form.reset();
-        } catch (error) {
-          console.log(error);
         }
-        if (values.name) {
-          values.slug = sluggify(values.name);
-        }
-        console.log(values);
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: "Error",
+          description: "Failed to save product",
+          variant: "destructive",
+        });
       }
     });
   }
