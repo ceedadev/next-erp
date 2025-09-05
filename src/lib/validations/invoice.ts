@@ -1,8 +1,8 @@
 import * as z from "zod";
 
 export const invoiceSchema = z.object({
-  customer: z.number().min(1, "Please select a customer"),
-  address: z.number(),
+  customer: z.string().min(1, "Please select a customer"),
+  address: z.string().optional(),
   number: z.string(),
   term: z.string(),
   note: z.string().optional(),
@@ -12,7 +12,7 @@ export const invoiceSchema = z.object({
   items: z
     .array(
       z.object({
-        productId: z.number(),
+        productId: z.string(),
         quantity: z.number(),
         price: z.number(),
         taxRate: z.number(),

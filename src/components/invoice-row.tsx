@@ -27,9 +27,9 @@ export default function InvoiceRow({ invoice, customer }: InvoiceRowProps) {
       <TableCell>{invoice.number}</TableCell>
       <TableCell>{format(invoice.date, "dd/MM/yyyy")}</TableCell>
       <TableCell>{customer?.name}</TableCell>
-      <TableCell>{invoice.amount}</TableCell>
+      <TableCell>${Number(invoice.amount).toLocaleString()}</TableCell>
       <TableCell>{format(invoice.dueDate, "dd/MM/yyyy")}</TableCell>
-      <TableCell>{invoice.amount}</TableCell>
+      <TableCell>${Number(invoice.amount).toLocaleString()}</TableCell>
       <TableCell>
         <StatusPill status={invoice.status} />
       </TableCell>

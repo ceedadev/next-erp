@@ -11,7 +11,8 @@ import InvoiceForm from "@/components/forms/invoice-form";
 import { Sheet } from "@/components/sheet";
 
 export default async function AddInvoicePage() {
-  const customers = await getAllCustomers();
+  const allCustomers = await getAllCustomers();
+  const customers = allCustomers.map(customer => ({ id: customer.id, name: customer.name }));
   const terms = await getPaymentTerms();
   const products = await getAllActiveProducts();
   const tax = await getTaxes();

@@ -1,7 +1,7 @@
 "use server";
 
 import * as z from "zod";
-import { asc, desc, eq } from "drizzle-orm";
+import { asc, desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
@@ -46,7 +46,9 @@ export async function createInvoice(values: z.infer<typeof invoiceSchema>) {
           dueDate: values.dueDate,
           status: "unpaid",
           customer: values.customer,
-          amount: total.toString(), //TODO: edit naming to match schema
+          amount: total.toString(),
+          note: values.note || "",
+          reference: values.refNumber || "",
         })
         .returning({ id: invoices.id });
 
@@ -60,7 +62,16 @@ export async function createInvoice(values: z.infer<typeof invoiceSchema>) {
         }))
       );
 
-      // TODO: update product stock here
+      // Update product stock
+      for (const item of values.items) {
+        await tx
+          .update(products)
+          .set({
+            quantity: sql`${products.quantity} - ${item.quantity}`,
+            updatedAt: new Date(),
+          })
+          .where(eq(products.id, item.productId));
+      }
     });
   } catch (error) {
     console.log(error);

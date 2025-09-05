@@ -182,9 +182,9 @@ export default async function DetailedInvoicePage({
                       {item.product?.sku}
                     </TableCell>
                     <TableCell>{item.product?.name}</TableCell>
-                    <TableCell>{item.price}</TableCell>
+                    <TableCell>${Number(item.price).toLocaleString()}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
-                    <TableCell>{Number(item.price) * item.quantity}</TableCell>
+                    <TableCell>${(Number(item.price) * item.quantity).toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -193,7 +193,7 @@ export default async function DetailedInvoicePage({
                   <TableCell colSpan={4} className="text-right">
                     Subtotal
                   </TableCell>
-                  <TableCell>{data.amount}</TableCell>
+                  <TableCell>${Number(data.amount).toLocaleString()}</TableCell>
                 </TableRow>
               </TableFooter>
             </Table>

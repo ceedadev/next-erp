@@ -72,7 +72,7 @@ import { Product } from "@/db/schema";
 import { Tax } from "@/app/_actions/tax";
 
 interface InvoiceFormProps {
-  customers: { name: string; id: number }[];
+  customers: { name: string; id: string }[];
   terms: { name: string; value: string; day: number }[];
   products: Product[];
   tax: Tax[];
@@ -91,8 +91,8 @@ export default function InvoiceForm({
       raw: true,
     }),
     defaultValues: {
-      customer: 0,
-      address: 0,
+      customer: "",
+      address: "",
       number: number,
       note: "",
       refNumber: "",

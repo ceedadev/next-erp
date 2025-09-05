@@ -75,7 +75,9 @@ export default async function InvoicesPage({
           <p className="text-sm font-semibold text-muted-foreground">
             Total Overdue
           </p>
-          <p className="text-xl font-bold">{}</p>
+          <p className="text-xl font-bold">
+            {data.filter(item => item.invoices.status === "overdue").length}
+          </p>
         </Card>
       </div>
       <div className="flex flex-col-reverse md:flex-row justify-between gap-4">
