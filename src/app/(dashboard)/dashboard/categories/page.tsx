@@ -77,11 +77,10 @@ export default function CategoryPage({
         </Table>
       </div>
       <PaginationControl
-        // totalPages={numberOfPages}
-        totalPages={1} //FIXME: Change this to numberOfPages
-        // hasNextPage={page < numberOfPages}
-        hasNextPage={page < 1} //FIXME: Change this to numberOfPages
-        hasPrevPage={page > 1}
+        totalPages={1}
+        hasNextPage={false}
+        hasPrevPage={false}
+        count={0}
       />
     </Sheet>
   );
