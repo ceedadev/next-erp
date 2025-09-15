@@ -3,14 +3,14 @@ import Image from "next/image";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/get-session";
-import UserSignInForm from "@/components/forms/user-signin-form";
+import UserSignUpForm from "@/components/forms/user-signup-form";
 
 export const metadata: Metadata = {
-  title: "Sign In",
-  description: "Authentication forms built using the components.",
+  title: "Sign Up",
+  description: "Create your account to get started with Next ERP.",
 };
 
-export default async function SignInPage() {
+export default async function SignUpPage() {
   const session = await getSession();
   if (session) {
     redirect("/dashboard");
@@ -25,23 +25,33 @@ export default async function SignInPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;This library has saved me countless hours of work and
-              helped me deliver stunning designs to my clients faster than ever
-              before.&rdquo;
+              &ldquo;Join thousands of businesses already using Next ERP to 
+              streamline their operations and boost productivity.&rdquo;
             </p>
-            <footer className="text-sm">Sofia Davis</footer>
+            <footer className="text-sm">Success Stories</footer>
           </blockquote>
         </div>
       </div>
       <div className="lg:p-8">
         <div className="mx-auto flex w-full h-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Create Account</h1>
             <p className="text-sm text-muted-foreground">
-              Enter your credentials below to Sign in to your account
+              Enter your information below to create your account
             </p>
           </div>
-          <UserSignInForm />
+          <UserSignUpForm />
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link
+                href="/signin"
+                className="underline underline-offset-4 hover:text-primary"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link
