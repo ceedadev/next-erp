@@ -107,6 +107,17 @@ export default function DashboardSidenav() {
           ]}
         />
         <Separator />
+        <Nav
+          isCollapsed={isCollapsed}
+          links={[
+            {
+              title: "Company",
+              icon: Building2Icon,
+              href: "/dashboard/company",
+            },
+          ]}
+        />
+        <Separator />
       </div>
     </aside>
   );

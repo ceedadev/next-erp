@@ -1,40 +1,34 @@
-import { signIn, signOut } from "@/lib/auth";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { signOut } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
 export function SignInButton({
-  provider,
   ...props
-}: {
-  provider?: string;
-} & React.ComponentPropsWithRef<typeof Button>) {
+}: React.ComponentPropsWithRef<typeof Button>) {
+  const router = useRouter();
+  
   return (
-    <form
-      action={async () => {
-        "use server";
-        await signIn(provider);
-      }}
-    >
-      <Button {...props}>Sign In</Button>
-    </form>
+    <Button {...props} onClick={() => router.push("/signin")}>
+      Sign In
+    </Button>
   );
 }
 
 export function SignOutButton({
-  provider,
   ...props
-}: {
-  provider?: string;
-} & React.ComponentPropsWithRef<typeof Button>) {
+}: React.ComponentPropsWithRef<typeof Button>) {
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/signin");
+  };
+
   return (
-    <form
-      action={async () => {
-        "use server";
-        await signOut();
-      }}
-    >
-      <Button variant={"ghost"} {...props}>
-        Sign Out
-      </Button>
-    </form>
+    <Button variant={"ghost"} {...props} onClick={handleSignOut}>
+      Sign Out
+    </Button>
   );
 }

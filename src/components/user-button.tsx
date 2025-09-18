@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/get-session";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import {
 import { SignInButton, SignOutButton } from "@/components/auth-buttons";
 
 export default async function UserButton() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user) {
     return <SignInButton />;
   }
