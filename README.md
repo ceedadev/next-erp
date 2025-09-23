@@ -1,65 +1,155 @@
 # Open Source Next ERP
 
-This is an opensource ERP project that designed to leverage the latest technologies using :
+A modern, full-featured Enterprise Resource Planning (ERP) system built with the latest web technologies. This open-source project provides a comprehensive solution for managing customers, products, invoices, and business operations.
 
-- [NextJS](https://nextjs.org/) App Router, with TypeScript.
-- [DrizzleORM](https://orm.drizzle.team/) and PostgresQL.
-- [ShadCN](https://ui.shadcn.com/) component library.
-- [Auth.js](https://authjs.dev/) for the authentication.
+## 🚀 Technology Stack
 
-This project is for educational purposes, you are free to contribute or fork to make your own version.
+- **[Next.js 14](https://nextjs.org/)** - App Router with TypeScript for full-stack development
+- **[Drizzle ORM](https://orm.drizzle.team/)** - Type-safe database operations with PostgreSQL
+- **[Better Auth](https://www.better-auth.com/)** - Modern authentication with email/password support
+- **[shadcn/ui](https://ui.shadcn.com/)** - Beautiful and accessible UI components
+- **[React Hook Form](https://react-hook-form.com/)** - Performant forms with validation
+- **[Zod](https://zod.dev/)** - TypeScript-first schema validation
 
-## Getting Started
+## ✨ Features
 
-You will need a PostgresQL server, and Github OAuth Application for AuthJS.
+### Authentication & Authorization
+- ✅ Email/password authentication
+- ✅ Secure session management
+- ✅ Protected routes and layouts
+- ✅ User onboarding flow
 
-Clone the Repository and install dependencies:
+### Company Management
+- ✅ Company registration and setup
+- ✅ Multi-tenant architecture ready
+- ✅ Company profile management
 
+### Customer Management
+- ✅ Complete customer CRUD operations
+- ✅ Customer search and filtering
+- ✅ Address management
+
+### Product Management
+- ✅ Product catalog with categories
+- ✅ SKU and inventory tracking
+- ✅ Product search and filtering
+
+### Invoice Management
+- ✅ Invoice creation and management
+- ✅ Multiple invoice statuses (paid, unpaid, overdue)
+- ✅ Invoice line items with products
+- ✅ PDF generation ready
+
+### Dashboard & Analytics
+- ✅ Real-time business metrics
+- ✅ Revenue and customer analytics
+- ✅ Recent activity tracking
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- PostgreSQL database
+- Git
+
+### Installation
+
+1. **Clone the repository**
 ```bash
 git clone https://github.com/ceedadev/next-erp.git
+cd next-erp
 npm install
 ```
 
-Prepare environment variable
-
+2. **Set up environment variables**
 ```bash
 cp .env.example .env
 ```
 
-and copy your postgres connection url to .env file
+Add your PostgreSQL connection URL to the `.env` file:
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/next_erp"
+```
 
-Perform DB Push
-
+3. **Initialize the database**
 ```bash
 npm run db:push
 ```
 
-Run the development server:
-
+4. **Start the development server**
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. **Open your browser**
+Navigate to [http://localhost:3000](http://localhost:3000) to access the application.
 
-## Contributing
+## 🎯 User Journey
 
-We welcome contributions from the community! If you'd like to contribute, please make a branch and pull request when you are done.
+### New Users
+1. Visit the homepage → Click "Get Started"
+2. Create account with email/password → Sign up
+3. Complete company registration → Provide business details
+4. Access dashboard → Start managing your business
 
-## Feature Todo List
+### Existing Users
+1. Visit the homepage → Click "Sign In"
+2. Enter credentials → Access dashboard immediately
 
-- [ ] Product Page
-  - [x] List All Product
-  - [x] Add Product
-  - [ ] Edit Product
-- [ ] Customer Page
-  - [ ] List All Customer
-  - [ ] Add Customer
-  - [ ] Edit Customer
-- [ ] Invoice Page
-  - [x] List All Invoice
-  - [x] Add Invoice
-  - [ ] Edit Invoice
-  - [ ] Payment details in invoice
+## 📁 Project Structure
 
-and more...
+```
+src/
+├── app/                    # Next.js app directory
+│   ├── (auth)/            # Authentication routes
+│   │   ├── signin/        # Sign in page
+│   │   ├── signup/        # Sign up page
+│   │   └── register-company/ # Company registration
+│   ├── (dashboard)/       # Protected dashboard routes
+│   │   ├── customers/     # Customer management
+│   │   ├── products/      # Product management
+│   │   ├── invoices/      # Invoice management
+│   │   └── company/       # Company settings
+│   └── _actions/          # Server actions
+├── components/            # Reusable UI components
+│   ├── forms/            # Form components
+│   └── ui/               # shadcn/ui components
+├── db/                   # Database configuration
+│   └── schema.ts         # Drizzle schema definitions
+└── lib/                  # Utility functions
+    ├── auth.ts           # Better Auth configuration
+    ├── auth-client.ts    # Client-side auth functions
+    └── validations/      # Zod schemas
+```
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Here's how you can help:
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Make your changes**: Follow the existing code style and patterns
+4. **Test your changes**: Ensure all features work as expected
+5. **Commit your changes**: `git commit -m 'Add some amazing feature'`
+6. **Push to the branch**: `git push origin feature/amazing-feature`
+7. **Open a Pull Request**: Describe your changes and their benefits
+
+### Development Guidelines
+- Follow TypeScript best practices
+- Use existing UI components from shadcn/ui
+- Implement proper error handling
+- Add proper validation with Zod schemas
+- Write clean, self-documenting code
+
+## 📝 License
+
+This project is open source and available under the MIT License. Feel free to fork, modify, and use it for your own purposes.
+
+## 🌟 Support
+
+If you find this project helpful, please consider giving it a star on GitHub! Your support helps us continue improving the project.
+
+---
+
+Built with ❤️ by the open source community
