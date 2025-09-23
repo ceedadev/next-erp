@@ -218,7 +218,8 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
                     <Input 
                       type="url" 
                       placeholder="https://www.company.com" 
-                      {...field} 
+                      {...field}
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -234,7 +235,7 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Industry</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select industry" />
@@ -259,7 +260,7 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Company Size</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select company size" />
@@ -288,7 +289,8 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
                 <FormControl>
                   <Textarea 
                     placeholder="Brief description of your company..." 
-                    {...field} 
+                    {...field}
+                    value={field.value || ""}
                   />
                 </FormControl>
                 <FormDescription>
@@ -311,7 +313,7 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
               <FormItem>
                 <FormLabel>Street Address</FormLabel>
                 <FormControl>
-                  <Input placeholder="123 Business St" {...field} />
+                  <Input placeholder="123 Business St" {...field} value={field.value || ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -326,7 +328,7 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input placeholder="New York" {...field} />
+                    <Input placeholder="New York" {...field} value={field.value || ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -340,7 +342,7 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
                 <FormItem>
                   <FormLabel>State/Province</FormLabel>
                   <FormControl>
-                    <Input placeholder="NY" {...field} />
+                    <Input placeholder="NY" {...field} value={field.value || ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -354,7 +356,7 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
                 <FormItem>
                   <FormLabel>Postal Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="10001" {...field} />
+                    <Input placeholder="10001" {...field} value={field.value || ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -369,7 +371,7 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
               <FormItem>
                 <FormLabel>Country</FormLabel>
                 <FormControl>
-                  <Input placeholder="United States" {...field} />
+                  <Input placeholder="United States" {...field} value={field.value || ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -391,7 +393,8 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
                   <Input 
                     type="url" 
                     placeholder="https://www.company.com/logo.png" 
-                    {...field} 
+                    {...field}
+                    value={field.value || ""}
                   />
                 </FormControl>
                 <FormDescription>

@@ -12,7 +12,7 @@ export default function InvoiceTabs() {
   const defaultValue = searchParams.get("status") ?? "all";
 
   function handleClick(value: string) {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams.toString());
     if (value === "all") {
       params.delete("status");
     } else {

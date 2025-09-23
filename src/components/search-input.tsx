@@ -16,7 +16,7 @@ export default function SearchInput({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const createQueryString = (name: string, value: string) => {
     params.set(name, value);
