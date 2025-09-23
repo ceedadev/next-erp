@@ -65,7 +65,7 @@ export function DatePickerWithRange({
   }
 
   function onDateChange(date: DateRange) {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams.toString());
     params.set("from", format(date.from!, "yyyy-MM-dd"));
     params.set("to", format(date.to!, "yyyy-MM-dd"));
     router.push(`${pathName}?${params.toString()}`);
