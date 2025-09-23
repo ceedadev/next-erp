@@ -199,7 +199,8 @@ export default function CompanyForm({ company, redirectTo = "/dashboard/company"
                     <Input 
                       type="tel" 
                       placeholder="+1 (555) 123-4567" 
-                      {...field} 
+                      {...field}
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />

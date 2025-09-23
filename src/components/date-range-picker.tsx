@@ -64,12 +64,13 @@ export function DatePickerWithRange({
     setDate({ from, to: now });
   }
 
-  function onDateChange(date: DateRange) {
+  const onDateChange = React.useCallback((date: DateRange) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("from", format(date.from!, "yyyy-MM-dd"));
     params.set("to", format(date.to!, "yyyy-MM-dd"));
     router.push(`${pathName}?${params.toString()}`);
-  }
+  }, [searchParams, pathName, router]);
+
   //   check on date if from and to is not undefined, then update the query params
   React.useEffect(() => {
     if (date?.from && date?.to) {
