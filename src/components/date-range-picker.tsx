@@ -75,7 +75,7 @@ export function DatePickerWithRange({
     if (date?.from && date?.to) {
       onDateChange(date);
     }
-  }, [date]);
+  }, [date, onDateChange]);
 
   return (
     <div className={cn("grid gap-2", className)}>

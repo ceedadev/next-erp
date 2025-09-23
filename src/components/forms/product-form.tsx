@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import Image from "next/image";
 
 import * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -220,9 +221,11 @@ export default function ProductForm({ product }: ProductFormProps) {
                 </FormControl>
                 <FormMessage />
                 {selectedImage && (
-                  <img
+                  <Image
                     src={selectedImage}
-                    alt={"Selected product image"}
+                    alt="Selected product image"
+                    width={160}
+                    height={160}
                     className="w-full md:w-40 aspect-square object-cover shadow-md"
                   />
                 )}
