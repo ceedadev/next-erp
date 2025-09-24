@@ -1,7 +1,6 @@
 "use client";
 import * as React from "react";
 import {
-  ActivitySquare,
   BoxIcon,
   BoxesIcon,
   Building2Icon,
@@ -56,11 +55,6 @@ export default function DashboardSidenav() {
               title: "Dashboard",
               href: "/dashboard",
               icon: LayoutDashboard,
-            },
-            {
-              title: "Activities",
-              icon: ActivitySquare,
-              href: "/dashboard/activities",
             },
             {
               title: "Invoices",
