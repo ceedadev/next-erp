@@ -9,13 +9,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableCell,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, DownloadIcon } from "@radix-ui/react-icons";
 import CategoryRow from "@/components/category-row";
 import PaginationControl from "@/components/pagination-control";
+import { getCategoriesWithPagination } from "@/app/_actions/category";
 
-export default function CategoryPage({
+export default async function CategoryPage({
   searchParams,
 }: {
   searchParams: {
@@ -26,33 +28,53 @@ export default function CategoryPage({
   };
 }) {
   const page = Number(searchParams.page ?? 1);
-  const perPage = searchParams.perPage ?? 10;
-  const offset = (page - 1) * perPage;
+  const perPage = Number(searchParams.perPage ?? 10);
   const search = searchParams.search ?? "";
+  const sort: [string, "asc" | "desc"] = searchParams.sort ?? ["name", "asc"];
+
+  const { data: categories, totalCount, totalPages } = await getCategoriesWithPagination(
+    page,
+    perPage,
+    search,
+    sort
+  );
+
+  const hasNextPage = page < totalPages;
+  const hasPrevPage = page > 1;
 
   return (
     <Sheet>
       <Breadcrumbs
         segments={[
           { title: "Dashboard", href: "/dashboard" },
-          { title: "Category", href: "/dashboard/categories" },
+          { title: "Categories", href: "/dashboard/categories" },
         ]}
       />
-      <div className="flex flex-row w-full justify-end space-x-4">
-        <SearchInput className="max-w-sm" placeholder="Search Category..." />
-        <Button asChild variant={"default"}>
-          <Link href="/dashboard/products/add">
-            <PlusIcon className="mr-2" />
-            <p>Add Category</p>
-          </Link>
-        </Button>
-        <Button disabled variant={"outline"}>
-          <DownloadIcon />
-        </Button>
+      
+      <div className="flex flex-col sm:flex-row w-full justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Categories</h1>
+          <p className="text-muted-foreground">
+            Manage product categories and organization.
+          </p>
+        </div>
+        
+        <div className="flex flex-row space-x-4">
+          <SearchInput className="max-w-sm" placeholder="Search categories..." />
+          <Button asChild variant="default">
+            <Link href="/dashboard/categories/add">
+              <PlusIcon className="mr-2" />
+              Add Category
+            </Link>
+          </Button>
+          <Button disabled variant="outline">
+            <DownloadIcon />
+          </Button>
+        </div>
       </div>
-      <div className="overflow-auto border md:p-4 rounded-md shadow-md">
-        {/* TABLE HERE */}
-        <Table className="overflow-scroll min-w-max">
+
+      <div className="overflow-auto border rounded-md shadow-md">
+        <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Category Name</TableHead>
@@ -63,26 +85,32 @@ export default function CategoryPage({
             </TableRow>
           </TableHeader>
           <TableBody>
-            <CategoryRow />
-            <CategoryRow />
-            <CategoryRow />
-            <CategoryRow />
-            <CategoryRow />
-            <CategoryRow />
-            <CategoryRow />
-            <CategoryRow />
-            <CategoryRow />
-            <CategoryRow />
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <CategoryRow key={category.id} category={category} />
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-10">
+                  <div className="space-y-2">
+                    <p>No categories found.</p>
+                    <p className="text-sm text-muted-foreground">
+                      {search ? `No categories match "${search}"` : "Create your first category to get started"}
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
+      
       <PaginationControl
-        totalPages={1}
-        hasNextPage={false}
-        hasPrevPage={false}
-        count={0}
+        totalPages={totalPages}
+        hasNextPage={hasNextPage}
+        hasPrevPage={hasPrevPage}
+        count={totalCount}
       />
     </Sheet>
   );
 }
-// TODO: Add Category Model to Schema, generate and push db
