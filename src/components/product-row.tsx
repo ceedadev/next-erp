@@ -59,13 +59,6 @@ export default function ProductRow({ product }: { product: Product }) {
           onChange={(e) => handleInputChange("price", e.target.value)}
         />
       </TableCell>
-      <TableCell className="w-40">
-        <Input
-          type="number"
-          value={Number(productState.quantity)}
-          onChange={(e) => handleInputChange("quantity", e.target.value)}
-        />
-      </TableCell>
       <TableCell className="w-12">
         <Switch
           checked={productState.isActive}

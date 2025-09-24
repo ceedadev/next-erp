@@ -78,7 +78,6 @@ export default async function ProductPage({
               <TableHead></TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Price</TableHead>
-              <TableHead>Stock</TableHead>
               <TableHead className="text-center">Active</TableHead>
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
@@ -90,7 +89,7 @@ export default async function ProductPage({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10">
+                <TableCell colSpan={5} className="text-center py-10">
                   No products found.
                 </TableCell>
               </TableRow>
