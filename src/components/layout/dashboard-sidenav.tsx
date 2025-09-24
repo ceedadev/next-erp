@@ -6,6 +6,7 @@ import {
   Building2Icon,
   ChevronRight,
   LayoutDashboard,
+  Settings,
   Users2Icon,
   WalletCards,
   WarehouseIcon,
@@ -105,9 +106,9 @@ export default function DashboardSidenav() {
           isCollapsed={isCollapsed}
           links={[
             {
-              title: "Company",
-              icon: Building2Icon,
-              href: "/dashboard/company",
+              title: "Settings",
+              icon: Settings,
+              href: "/dashboard/settings",
             },
           ]}
         />

@@ -26,6 +26,18 @@ export async function getCompanyById(id: string) {
   return data[0] || null;
 }
 
+export async function getCurrentUserCompany() {
+  // For now, get the first active company
+  // TODO: In a proper multi-tenant setup, this should be based on user's company association
+  const data = await db
+    .select()
+    .from(tenants)
+    .where(eq(tenants.isActive, true))
+    .limit(1);
+
+  return data[0] || null;
+}
+
 export async function createCompany(formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
