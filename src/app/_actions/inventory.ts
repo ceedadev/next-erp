@@ -19,25 +19,28 @@ export async function getInventoryWithPagination(
   let whereClause = eq(products.isActive, true);
 
   if (search) {
-    whereClause = and(
+    const searchClause = and(
       whereClause,
       like(products.name, `%${search}%`)
     );
+    if (searchClause) whereClause = searchClause;
   }
 
   if (categoryId) {
-    whereClause = and(
+    const categoryClause = and(
       whereClause,
       eq(products.categoryId, categoryId)
     );
+    if (categoryClause) whereClause = categoryClause;
   }
 
   if (lowStock) {
     // Consider items with quantity <= 10 as low stock
-    whereClause = and(
+    const lowStockClause = and(
       whereClause,
       lte(products.quantity, 10)
     );
+    if (lowStockClause) whereClause = lowStockClause;
   }
 
   const data = await db
@@ -183,22 +186,26 @@ export async function getInventoryStats() {
       .where(eq(products.isActive, true))
       .then((result) => result[0]?.count || 0);
 
+    const lowStockClause = and(
+      eq(products.isActive, true),
+      lte(products.quantity, 10)
+    );
+
     const lowStock = await db
       .select({ count: count() })
       .from(products)
-      .where(and(
-        eq(products.isActive, true),
-        lte(products.quantity, 10)
-      ))
+      .where(lowStockClause!)
       .then((result) => result[0]?.count || 0);
+
+    const outOfStockClause = and(
+      eq(products.isActive, true),
+      eq(products.quantity, 0)
+    );
 
     const outOfStock = await db
       .select({ count: count() })
       .from(products)
-      .where(and(
-        eq(products.isActive, true),
-        eq(products.quantity, 0)
-      ))
+      .where(outOfStockClause!)
       .then((result) => result[0]?.count || 0);
 
     return {
